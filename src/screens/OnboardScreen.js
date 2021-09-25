@@ -30,13 +30,13 @@ const OnboardScreen = ({ navigation }) => {
             backgroundColor: '#a6e4d0',
             image: <Image source={require('../../assets/re-onboarding-2.png')} />,
             title: 'Reliable & Safe',
-            subtitle: 'All negotiations are reliable and safe',
+            subtitle: 'All information are reliable and safe',
           },
           {
             backgroundColor: '#a6e4d0',
-            image: <Image source={require('../../assets/onboarding-img3.png')} />,
-            title: 'Onboarding 3',
-            subtitle: 'Done with React Native Onboarding Swiper',
+            image: <Image source={require('../../assets/re-onboarding-3.png')} />,
+            title: 'Continuous Updates',
+            subtitle: 'Continuous updates to make sure you find the suitable home quicky',
           },
         ]}
       />
