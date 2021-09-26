@@ -18,7 +18,7 @@ const launchFirstTime = dispatch => async () => {
     dispatch({ type: 'launch_first_time', payload: true });
   } else {
     dispatch({ type: 'launch_first_time', payload: false });
-    navigate('Login');
+    navigate('Welcome');
   }
 };
 
