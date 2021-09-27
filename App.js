@@ -6,10 +6,12 @@ import { Provider as OnboardProvider } from './src/context/OnboardContext';
 import OnboardScreen from './src/screens/OnboardScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
+import SignupScreen from './src/screens/SignupScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
-  Login: LoginScreen
+  Login: LoginScreen,
+  Signup: SignupScreen
 });
 
 const switchNavigator = createSwitchNavigator({

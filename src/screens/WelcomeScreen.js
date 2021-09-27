@@ -1,9 +1,10 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-elements';
+import * as constants from '../constants';
 import Spacer from '../components/Spacer';
 
-const WelcomeScreen = () => {
+const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image
@@ -18,19 +19,21 @@ const WelcomeScreen = () => {
         buttonStyle={{
           width: 250,
           padding: 10,
-          backgroundColor: '#43AB8A',
+          backgroundColor: constants.MAIN_COLOR,
           borderRadius: 20,
           marginBottom: 10
         }}
+        onPress={() => navigation.navigate('Login')}
       />
       <Button
         title='Sign Up'
         buttonStyle={{
           width: 250,
           padding: 10,
-          backgroundColor: '#43AB8A',
+          backgroundColor: constants.MAIN_COLOR,
           borderRadius: 20
         }}
+        onPress={() => navigation.navigate('Signup')}
       />
     </View>
   );
@@ -49,7 +52,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   welcomeText: {
-    color: '#43AB8A',
+    color: constants.MAIN_COLOR,
     marginBottom: 10
   }
 });
