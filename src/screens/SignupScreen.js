@@ -21,42 +21,37 @@ const SignupScreen = () => {
       <Spacer />
       <Input
         placeholder='First name'
-        inputContainerStyle={{ marginLeft: 13, marginRight: 13 }}
+        inputContainerStyle={styles.input}
         autoCapitalize='none'
         autoCorrect={false}
       />
       <Input
         placeholder='Last name'
-        inputContainerStyle={{ marginLeft: 13, marginRight: 13 }}
+        inputContainerStyle={styles.input}
         autoCapitalize='none'
         autoCorrect={false}
       />
       <Input
         placeholder='E-mail address'
-        inputContainerStyle={{ marginLeft: 13, marginRight: 13 }}
+        inputContainerStyle={styles.input}
         autoCapitalize='none'
         autoCorrect={false}
       />
       <Input
         placeholder='Password'
-        inputContainerStyle={{ marginLeft: 13, marginRight: 13 }}
+        inputContainerStyle={styles.input}
         secureTextEntry
         autoCapitalize='none'
         autoCorrect={false}
       />
+      <Text style={styles.passwordRequirement}>*Password must have at least eight characters, one letter and one number</Text>
       <Spacer />
       <Button
         title='Create'
-        buttonStyle={{
-          width: 250,
-          padding: 10,
-          backgroundColor: constants.MAIN_COLOR,
-          borderRadius: 20,
-          marginBottom: 10
-        }}
+        buttonStyle={styles.button}
       />
       <Spacer />
-      <Text style={{ fontSize: 11 }}>By creating an account you agree with our Terms of Use</Text>
+      <Text style={{ fontSize: 11, fontWeight: 'bold' }}>By creating an account you agree with our Terms of Use</Text>
     </View>
   );
 };
@@ -77,6 +72,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white'
+  },
+  input: {
+    marginLeft: 13,
+    marginRight: 13
+  },
+  passwordRequirement: {
+    marginLeft: 14,
+    marginRight: 14,
+    fontSize: 12
+  },
+  button: {
+    width: 250,
+    padding: 10,
+    backgroundColor: constants.MAIN_COLOR,
+    borderRadius: 20,
+    marginBottom: 10
   }
 });
 
