@@ -4,7 +4,7 @@ import { Text, Avatar, Input, Button } from 'react-native-elements';
 import * as constants from '../constants';
 import Spacer from '../components/Spacer';
 
-const SignupScreen = () => {
+const SignupScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text h2 style={{ color: constants.MAIN_COLOR }}>Create new account</Text>
@@ -49,6 +49,7 @@ const SignupScreen = () => {
       <Button
         title='Create'
         buttonStyle={styles.button}
+        onPress={() => navigation.navigate('PhoneVerification')}
       />
       <Spacer />
       <Text style={{ fontSize: 11, fontWeight: 'bold' }}>By creating an account you agree with our Terms of Use</Text>

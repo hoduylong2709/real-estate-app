@@ -7,11 +7,15 @@ import OnboardScreen from './src/screens/OnboardScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import SignupScreen from './src/screens/SignupScreen';
+import PhoneNumberInputScreen from './src/screens/PhoneNumberInputScreen';
+import OTPScreen from './src/screens/OTPScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
   Login: LoginScreen,
-  Signup: SignupScreen
+  Signup: SignupScreen,
+  PhoneVerification: PhoneNumberInputScreen,
+  OTPVerification: OTPScreen
 });
 
 const switchNavigator = createSwitchNavigator({
