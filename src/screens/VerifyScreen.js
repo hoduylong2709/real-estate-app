@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { Text, Button } from 'react-native-elements';
 import * as constants from '../constants';
 import OTPInputView from 'react-native-otp-textinput';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Spacer from '../components/Spacer';
 
-const OTPScreen = ({ navigation }) => {
+const VerifyScreen = ({ navigation }) => {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -19,9 +19,13 @@ const OTPScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text h3 style={{ color: constants.MAIN_COLOR }}>Confirmation</Text>
+      <Text h3 style={{ color: constants.MAIN_COLOR }}>Verification</Text>
       <Spacer />
-      <Text h5>Please type the OTP code sent to </Text>
+      <Text h5>Please type the verifying code we send to your email</Text>
+      <Spacer />
+      <Image
+        source={require('../../assets/send-email.png')}
+      />
       <Text h5 style={{ fontWeight: 'bold' }}>{navigation.getParam('phoneNumber')}</Text>
       <Spacer />
       <OTPInputView
@@ -43,7 +47,7 @@ const OTPScreen = ({ navigation }) => {
   );
 };
 
-OTPScreen.navigationOptions = () => {
+VerifyScreen.navigationOptions = () => {
   return {
     headerStyle: {
       elevation: 0
@@ -72,5 +76,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default OTPScreen;
+export default VerifyScreen;
 

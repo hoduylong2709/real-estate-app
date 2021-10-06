@@ -1,17 +1,35 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { StyleSheet, View, Image } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import { Text, Input, Button } from 'react-native-elements';
-import * as constants from '../constants';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { MaterialIcons, Entypo, FontAwesome } from '@expo/vector-icons';
+import * as constants from '../constants';
 import Spacer from '../components/Spacer';
+import { Context as AuthContext } from '../context/AuthContext';
+import CustomModal from './../components/CustomModal';
 
 const LoginScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login, clearErrorMessage, state: { loading, errorMessage, token } } = useContext(AuthContext);
+
   return (
     <View style={styles.container}>
+      <NavigationEvents
+        onWillFocus={clearErrorMessage}
+        onDidBlur={clearErrorMessage}
+      />
       <Text h2 style={{ color: constants.MAIN_COLOR }}>Log In</Text>
+      <Spacer />
+      <Image
+        source={require('../../assets/log-in.png')}
+      />
       <Spacer />
       <Input
         placeholder='Your e-mail'
+        value={email}
+        onChangeText={setEmail}
         leftIcon={
           <MaterialIcons name="email" size={24} color={constants.MAIN_COLOR} />
         }
@@ -21,6 +39,8 @@ const LoginScreen = () => {
       />
       <Input
         placeholder='Your password'
+        value={password}
+        onChangeText={setPassword}
         leftIcon={
           <Entypo name="lock" size={24} color={constants.MAIN_COLOR} />
         }
@@ -32,6 +52,7 @@ const LoginScreen = () => {
       <Spacer />
       <Button
         title='Enter'
+        onPress={() => login({ email, password })}
         buttonStyle={{
           width: 250,
           padding: 10,
@@ -53,6 +74,15 @@ const LoginScreen = () => {
           marginBottom: 10
         }}
         icon={<FontAwesome name="google" size={24} color="white" style={{ marginRight: 10 }} />}
+      />
+      <Spinner
+        visible={loading}
+        textStyle={styles.spinnerTextStyle}
+      />
+      <CustomModal
+        isError={errorMessage ? true : false}
+        hideModal={clearErrorMessage}
+        text={errorMessage}
       />
     </View>
   );

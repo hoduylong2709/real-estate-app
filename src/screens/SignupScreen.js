@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Text, Avatar, Input, Button } from 'react-native-elements';
+import { StyleSheet, View, Image } from 'react-native';
+import { Text, Input, Button } from 'react-native-elements';
 import * as constants from '../constants';
 import Spacer from '../components/Spacer';
 
@@ -9,15 +9,9 @@ const SignupScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Text h2 style={{ color: constants.MAIN_COLOR }}>Create new account</Text>
       <Spacer />
-      <TouchableOpacity activeOpacity={0.8}>
-        <Avatar
-          rounded
-          icon={{ name: 'image', type: 'font-awesome' }}
-          activeOpacity={0.7}
-          containerStyle={{ backgroundColor: 'grey' }}
-          size={90}
-        />
-      </TouchableOpacity>
+      <Image
+        source={require('../../assets/add-user.png')}
+      />
       <Spacer />
       <Input
         placeholder='First name'
@@ -49,7 +43,7 @@ const SignupScreen = ({ navigation }) => {
       <Button
         title='Create'
         buttonStyle={styles.button}
-        onPress={() => navigation.navigate('PhoneVerification')}
+        onPress={() => navigation.navigate('Verify')}
       />
       <Spacer />
       <Text style={{ fontSize: 11, fontWeight: 'bold' }}>By creating an account you agree with our Terms of Use</Text>
