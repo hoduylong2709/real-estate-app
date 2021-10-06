@@ -9,6 +9,9 @@ const authReducer = (state, action) => {
       return { ...state, loading: true };
     case 'login':
       return { errorMessage: '', token: action.payload, loading: false };
+    case 'signup': {
+      return { ...state, loading: false };
+    }
     case 'add_error':
       return { ...state, errorMessage: action.payload, loading: false };
     case 'logout':
@@ -24,11 +27,39 @@ const login = dispatch => async ({ email, password }) => {
   try {
     dispatch({ type: 'auth_start' });
     const response = await realEstateApi.post('/users/login', { email, password });
+    if (response.data.token) {
+      await AsyncStorage.setItem('token', response.data.token);
+      dispatch({ type: 'login', payload: response.data.token });
+      navigate('Home');
+    } else {
+      dispatch({ type: 'signup' });
+      navigate('Verify', { id: response.data.user._id });
+    }
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Email or password might be incorrect!' });
+  }
+};
+
+const signup = dispatch => async ({ firstName, lastName, email, password }) => {
+  try {
+    dispatch({ type: 'auth_start' });
+    const response = await realEstateApi.post('/users', { firstName, lastName, email, password });
+    dispatch({ type: 'signup' });
+    navigate('Verify', { id: response.data.user._id });
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'That email was already in use!' });
+  }
+};
+
+const verify = dispatch => async (id, verifyCode) => {
+  try {
+    dispatch({ type: 'auth_start' });
+    const response = await realEstateApi.post(`/users/verify/${id}`, { verifyCode });
     await AsyncStorage.setItem('token', response.data.token);
     dispatch({ type: 'login', payload: response.data.token });
     navigate('Home');
   } catch (error) {
-    dispatch({ type: 'add_error', payload: 'Email or password might be incorrect!' });
+    dispatch({ type: 'add_error', payload: 'The verify code is incorrect!' });
   }
 };
 
@@ -44,6 +75,6 @@ const clearErrorMessage = dispatch => () => {
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { login, logout, clearErrorMessage },
+  { login, signup, verify, logout, clearErrorMessage },
   { token: null, errorMessage: '', loading: false }
 );

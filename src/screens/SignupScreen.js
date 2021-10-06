@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, View, Image } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import { Text, Input, Button } from 'react-native-elements';
+import Spinner from 'react-native-loading-spinner-overlay';
 import * as constants from '../constants';
 import Spacer from '../components/Spacer';
+import { Context as AuthContext } from '../context/AuthContext';
+import CustomModal from './../components/CustomModal';
 
-const SignupScreen = ({ navigation }) => {
+const SignupScreen = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setlastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { signup, clearErrorMessage, state: { errorMessage, loading } } = useContext(AuthContext);
+
   return (
     <View style={styles.container}>
+      <NavigationEvents
+        onWillFocus={clearErrorMessage}
+        onDidBlur={clearErrorMessage}
+      />
       <Text h2 style={{ color: constants.MAIN_COLOR }}>Create new account</Text>
       <Spacer />
       <Image
@@ -15,24 +29,32 @@ const SignupScreen = ({ navigation }) => {
       <Spacer />
       <Input
         placeholder='First name'
+        value={firstName}
+        onChangeText={setFirstName}
         inputContainerStyle={styles.input}
         autoCapitalize='none'
         autoCorrect={false}
       />
       <Input
         placeholder='Last name'
+        value={lastName}
+        onChangeText={setlastName}
         inputContainerStyle={styles.input}
         autoCapitalize='none'
         autoCorrect={false}
       />
       <Input
         placeholder='E-mail address'
+        value={email}
+        onChangeText={setEmail}
         inputContainerStyle={styles.input}
         autoCapitalize='none'
         autoCorrect={false}
       />
       <Input
         placeholder='Password'
+        value={password}
+        onChangeText={setPassword}
         inputContainerStyle={styles.input}
         secureTextEntry
         autoCapitalize='none'
@@ -43,10 +65,18 @@ const SignupScreen = ({ navigation }) => {
       <Button
         title='Create'
         buttonStyle={styles.button}
-        onPress={() => navigation.navigate('Verify')}
+        onPress={() => signup({ firstName, lastName, email, password })}
       />
       <Spacer />
       <Text style={{ fontSize: 11, fontWeight: 'bold' }}>By creating an account you agree with our Terms of Use</Text>
+      <Spinner
+        visible={loading}
+      />
+      <CustomModal
+        isError={errorMessage ? true : false}
+        hideModal={clearErrorMessage}
+        text={errorMessage}
+      />
     </View>
   );
 };

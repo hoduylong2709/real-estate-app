@@ -12,7 +12,7 @@ import CustomModal from './../components/CustomModal';
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, clearErrorMessage, state: { loading, errorMessage, token } } = useContext(AuthContext);
+  const { login, clearErrorMessage, state: { loading, errorMessage } } = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
@@ -77,7 +77,6 @@ const LoginScreen = () => {
       />
       <Spinner
         visible={loading}
-        textStyle={styles.spinnerTextStyle}
       />
       <CustomModal
         isError={errorMessage ? true : false}
