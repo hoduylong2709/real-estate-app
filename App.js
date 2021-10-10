@@ -2,7 +2,9 @@ import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { FontAwesome } from '@expo/vector-icons';
 import { setNavigator } from './src/navigationRef';
+import * as constants from './src/constants';
 import { Provider as OnboardProvider } from './src/context/OnboardContext';
 import { Provider as AuthProvider } from './src/context/AuthContext';
 import OnboardScreen from './src/screens/OnboardScreen';
@@ -11,6 +13,11 @@ import WelcomeScreen from './src/screens/WelcomeScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import VerifyScreen from './src/screens/VerifyScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import CategoriesScreen from './src/screens/CategoriesScreen';
+import ChatScreen from './src/screens/ChatScreen';
+import SearchScreen from './src/screens/SearchScreen';
+import DetailListingScreen from './src/screens/DetailListingScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -19,15 +26,33 @@ const loginFlow = createStackNavigator({
   Verify: VerifyScreen
 });
 
+const homeFlow = createStackNavigator({
+  Home: HomeScreen,
+  DetailListing: DetailListingScreen,
+  Profile: ProfileScreen
+}, {
+  defaultNavigationOptions: {
+    headerTitleAlign: 'center'
+  }
+});
+
+homeFlow.navigationOptions = {
+  tabBarLabel: () => { return null },
+  tabBarIcon: ({ focused }) => <FontAwesome name='home' size={constants.TAB_BAR_ICON_SIZE} color={focused ? constants.MAIN_COLOR : 'grey'} />
+};
+
 const mainFlow = createBottomTabNavigator({
-  Home: HomeScreen
+  homeFlow,
+  Categories: CategoriesScreen,
+  Chat: ChatScreen,
+  Search: SearchScreen
 });
 
 const switchNavigator = createSwitchNavigator({
   Onboard: OnboardScreen,
   loginFlow,
   mainFlow
-});
+}, { initialRouteName: 'mainFlow' });
 
 const App = createAppContainer(switchNavigator);
 
