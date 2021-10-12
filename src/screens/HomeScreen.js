@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import { Avatar, Text } from 'react-native-elements';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
+import { Context as CategoryContext } from '../context/CategoryContext';
 import Spacer from './../components/Spacer';
 import CategoryCard from '../components/CategoryCard';
 
 const HomeScreen = () => {
-  const categories = ['Houses', 'Apartments', 'Condos', 'Land', 'Buildings', 'Town Houses', 'Recently Sold'];
+  const { fetchCategories, state: categories } = useContext(CategoryContext);
 
   return (
     <View style={styles.container}>
+      <NavigationEvents onWillFocus={fetchCategories} />
       <Spacer>
         <Text h4>Categories</Text>
       </Spacer>
@@ -20,12 +23,16 @@ const HomeScreen = () => {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         >
-          {categories.map(category => (
-            <CategoryCard
-              key={category}
-              imageUri={require('../../assets/category-houses.png')}
-              categoryName={category}
-            />
+          {categories && categories.map(category => (
+            <TouchableOpacity
+              activeOpacity={0.5}
+              key={category._id}
+            >
+              <CategoryCard
+                imageUri={category.image}
+                categoryName={category.name}
+              />
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>

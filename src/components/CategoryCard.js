@@ -4,14 +4,14 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 const CategoryCard = ({ imageUri, categoryName }) => {
   return (
     <View style={styles.container}>
-      <View style={{ flex: 2 }}>
+      <View>
         <Image
-          source={imageUri}
+          source={{ uri: `data:image/png;base64,${imageUri}` }}
           style={styles.image}
         />
       </View>
-      <View style={styles.nameContainer}>
-        <Text>{categoryName}</Text>
+      <View style={styles.textContainer}>
+        <Text style={{ fontWeight: 'bold' }}>{categoryName}</Text>
       </View>
     </View>
   );
@@ -19,23 +19,19 @@ const CategoryCard = ({ imageUri, categoryName }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 110,
-    width: 110,
+    backgroundColor: '#eee',
+    borderRadius: 10,
+    overflow: 'hidden',
     marginRight: 10,
     borderWidth: 1,
-    borderColor: '#dddddd',
-    borderRadius: 20
+    borderColor: '#dddddd'
   },
   image: {
-    flex: 1,
-    width: null,
-    height: null,
-    resizeMode: 'cover'
+    height: 80,
+    width: 100
   },
-  nameContainer: {
-    flex: 1,
-    paddingLeft: 10,
-    paddingTop: 10
+  textContainer: {
+    padding: 10, width: 100
   }
 });
 

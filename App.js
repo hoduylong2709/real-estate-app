@@ -7,6 +7,7 @@ import { setNavigator } from './src/navigationRef';
 import * as constants from './src/constants';
 import { Provider as OnboardProvider } from './src/context/OnboardContext';
 import { Provider as AuthProvider } from './src/context/AuthContext';
+import { Provider as CategoryProvider } from './src/context/CategoryContext';
 import OnboardScreen from './src/screens/OnboardScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
@@ -58,10 +59,12 @@ const App = createAppContainer(switchNavigator);
 
 export default () => {
   return (
-    <AuthProvider>
-      <OnboardProvider>
-        <App ref={(navigator) => { setNavigator(navigator) }} />
-      </OnboardProvider>
-    </AuthProvider>
+    <CategoryProvider>
+      <AuthProvider>
+        <OnboardProvider>
+          <App ref={(navigator) => { setNavigator(navigator) }} />
+        </OnboardProvider>
+      </AuthProvider>
+    </CategoryProvider>
   );
 };
