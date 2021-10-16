@@ -19,6 +19,8 @@ import ChatScreen from './src/screens/ChatScreen';
 import SearchScreen from './src/screens/SearchScreen';
 import DetailListingScreen from './src/screens/DetailListingScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import AddListingScreen from './src/screens/AddListingScreen';
+import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -30,7 +32,8 @@ const loginFlow = createStackNavigator({
 const homeFlow = createStackNavigator({
   Home: HomeScreen,
   DetailListing: DetailListingScreen,
-  Profile: ProfileScreen
+  Profile: ProfileScreen,
+  AddListing: AddListingScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
@@ -51,9 +54,10 @@ const mainFlow = createBottomTabNavigator({
 
 const switchNavigator = createSwitchNavigator({
   Onboard: OnboardScreen,
+  ResolveAuth: ResolveAuthScreen,
   loginFlow,
   mainFlow
-}, { initialRouteName: 'mainFlow' });
+});
 
 const App = createAppContainer(switchNavigator);
 

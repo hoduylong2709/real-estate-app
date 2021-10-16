@@ -56,6 +56,7 @@ HomeScreen.navigationOptions = ({ navigation }) => {
       <View style={styles.headerRight}>
         <TouchableOpacity
           activeOpacity={0.5}
+          onPress={() => navigation.navigate('AddListing')}
         >
           <MaterialIcons name="post-add" size={26} color={constants.MAIN_COLOR} />
         </TouchableOpacity>

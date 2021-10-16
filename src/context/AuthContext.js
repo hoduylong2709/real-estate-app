@@ -23,6 +23,16 @@ const authReducer = (state, action) => {
   }
 };
 
+const tryLocalLogin = dispatch => async () => {
+  const token = await AsyncStorage.getItem('token');
+  if (token) {
+    dispatch({ type: 'login', payload: token });
+    navigate('Home');
+  } else {
+    navigate('Welcome');
+  }
+};
+
 const login = dispatch => async ({ email, password }) => {
   try {
     dispatch({ type: 'auth_start' });
@@ -64,9 +74,14 @@ const verify = dispatch => async (id, verifyCode) => {
 };
 
 const logout = dispatch => async () => {
-  await AsyncStorage.removeItem('token');
-  dispatch({ type: 'logout' });
-  navigate('loginFlow');
+  try {
+    await realEstateApi.post('users/logout');
+    await AsyncStorage.removeItem('token');
+    dispatch({ type: 'logout' });
+    navigate('loginFlow');
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Cannot log out the user!' });
+  }
 };
 
 const clearErrorMessage = dispatch => () => {
@@ -75,6 +90,6 @@ const clearErrorMessage = dispatch => () => {
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { login, signup, verify, logout, clearErrorMessage },
+  { login, tryLocalLogin, signup, verify, logout, clearErrorMessage },
   { token: null, errorMessage: '', loading: false }
 );
