@@ -9,7 +9,7 @@ import * as constants from '../constants';
 import * as validationSchema from '../validationSchema';
 import Spacer from '../components/Spacer';
 import { Context as AuthContext } from '../context/AuthContext';
-import CustomModal from './../components/CustomModal';
+import ErrorModal from '../components/ErrorModal';
 
 const LoginScreen = () => {
   const { login, clearErrorMessage, state: { loading, errorMessage } } = useContext(AuthContext);
@@ -98,7 +98,7 @@ const LoginScreen = () => {
       <Spinner
         visible={loading}
       />
-      <CustomModal
+      <ErrorModal
         isError={errorMessage ? true : false}
         hideModal={clearErrorMessage}
         text={errorMessage}

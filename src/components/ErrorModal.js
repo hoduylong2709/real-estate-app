@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import Modal from 'react-native-modal';
 
-const CustomModal = ({ isError, hideModal, text }) => {
+const ErrorModal = ({ isError, hideModal, text }) => {
   return (
     <View>
       <Modal
@@ -46,5 +46,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CustomModal;
+export default ErrorModal;
 
