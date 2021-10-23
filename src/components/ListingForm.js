@@ -3,14 +3,17 @@ import { StyleSheet, Text, View, TextInput, Image, Platform, TouchableOpacity, S
 import { Input, Button } from 'react-native-elements';
 import CurrencyInput from 'react-native-currency-input';
 import ModalSelector from 'react-native-modal-selector';
+import { withNavigation } from 'react-navigation';
 import { AntDesign } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Context as CategoryContext } from '../context/CategoryContext';
 import * as constants from '../constants';
 import PhotoModal from './PhotoModal';
 import ConfirmationModal from './ConfirmationModal';
+import { Context as LocationContext } from '../context/LocationContext';
 
-const ListingForm = () => {
+const ListingForm = ({ navigation }) => {
   const [price, setPrice] = useState(null);
   const [selectedCurrency, setSelectedCurrency] = useState('USA');
   const [category, setCategory] = useState('');
@@ -19,6 +22,7 @@ const ListingForm = () => {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const { state: categories } = useContext(CategoryContext);
+  const { state: { location } } = useContext(LocationContext);
 
   const currencies = [
     { key: 1, label: 'USA' },
@@ -125,6 +129,19 @@ const ListingForm = () => {
             />
           </ModalSelector>
         </View>
+        <View style={styles.location}>
+          <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#9e9c9c' }}>
+            Location
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => navigation.navigate('Map')}
+          >
+            {location ?
+              <Text style={{ fontSize: 16, color: 'black', maxWidth: 220 }} multiline={true}>{location.address}</Text> :
+              <Feather name='map-pin' size={22} color={constants.MAIN_COLOR} />}
+          </TouchableOpacity>
+        </View>
         <View
           style={styles.photos}
         >
@@ -205,6 +222,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  location: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
   photos: {
     marginLeft: 10,
     marginTop: 20,
@@ -223,5 +247,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ListingForm;
+export default withNavigation(ListingForm);
 

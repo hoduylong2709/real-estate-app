@@ -8,6 +8,7 @@ import * as constants from './src/constants';
 import { Provider as OnboardProvider } from './src/context/OnboardContext';
 import { Provider as AuthProvider } from './src/context/AuthContext';
 import { Provider as CategoryProvider } from './src/context/CategoryContext';
+import { Provider as LocationProvider } from './src/context/LocationContext';
 import OnboardScreen from './src/screens/OnboardScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
@@ -21,6 +22,7 @@ import DetailListingScreen from './src/screens/DetailListingScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AddListingScreen from './src/screens/AddListingScreen';
 import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
+import MapScreen from './src/screens/MapScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -33,7 +35,8 @@ const homeFlow = createStackNavigator({
   Home: HomeScreen,
   DetailListing: DetailListingScreen,
   Profile: ProfileScreen,
-  AddListing: AddListingScreen
+  AddListing: AddListingScreen,
+  Map: MapScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
@@ -63,12 +66,14 @@ const App = createAppContainer(switchNavigator);
 
 export default () => {
   return (
-    <CategoryProvider>
-      <AuthProvider>
-        <OnboardProvider>
-          <App ref={(navigator) => { setNavigator(navigator) }} />
-        </OnboardProvider>
-      </AuthProvider>
-    </CategoryProvider>
+    <LocationProvider>
+      <CategoryProvider>
+        <AuthProvider>
+          <OnboardProvider>
+            <App ref={(navigator) => { setNavigator(navigator) }} />
+          </OnboardProvider>
+        </AuthProvider>
+      </CategoryProvider>
+    </LocationProvider>
   );
 };
