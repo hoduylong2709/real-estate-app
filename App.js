@@ -22,7 +22,6 @@ import DetailListingScreen from './src/screens/DetailListingScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AddListingScreen from './src/screens/AddListingScreen';
 import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
-import MapScreen from './src/screens/MapScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -35,17 +34,26 @@ const homeFlow = createStackNavigator({
   Home: HomeScreen,
   DetailListing: DetailListingScreen,
   Profile: ProfileScreen,
-  AddListing: AddListingScreen,
-  Map: MapScreen
+  AddListing: AddListingScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
   }
 });
 
-homeFlow.navigationOptions = {
-  tabBarLabel: () => { return null },
-  tabBarIcon: ({ focused }) => <FontAwesome name='home' size={constants.TAB_BAR_ICON_SIZE} color={focused ? constants.MAIN_COLOR : 'grey'} />
+homeFlow.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+  if (routeName === 'AddListing') {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarLabel: () => { return null },
+    tabBarIcon: ({ focused }) => <FontAwesome name='home' size={constants.TAB_BAR_ICON_SIZE} color={focused ? constants.MAIN_COLOR : 'grey'} />,
+    tabBarVisible
+  };
 };
 
 const mainFlow = createBottomTabNavigator({
