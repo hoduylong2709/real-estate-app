@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, Image, Platform, TouchableOpacity, S
 import { Input, Button } from 'react-native-elements';
 import CurrencyInput from 'react-native-currency-input';
 import ModalSelector from 'react-native-modal-selector';
+import { withNavigation } from 'react-navigation';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -13,7 +14,7 @@ import ConfirmationModal from './ConfirmationModal';
 import { Context as LocationContext } from '../context/LocationContext';
 import MapModal from './MapModal';
 
-const ListingForm = () => {
+const ListingForm = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState(null);
@@ -112,6 +113,7 @@ const ListingForm = () => {
             data={currencies}
             initValue={selectedCurrency}
             selectStyle={{ padding: 3, backgroundColor: constants.MAIN_COLOR }}
+            initValueTextStyle={{ color: 'white' }}
             onChange={option => setSelectedCurrency(option.label)}
           />
         </View>
@@ -130,7 +132,7 @@ const ListingForm = () => {
           <TextInput
             editable={false}
             placeholder='Select category...'
-            style={{ fontSize: 16, textAlign: 'center', color: 'black' }}
+            style={{ fontSize: 16, textAlign: 'right', color: 'black' }}
             value={category}
           />
         </ModalSelector>
@@ -191,6 +193,15 @@ const ListingForm = () => {
             images.length === 0
           }
           disabledStyle={{ backgroundColor: '#bcbcbc' }}
+          onPress={() => navigation.navigate('ListingFilters', {
+            categoryName: category,
+            title: title,
+            description: description,
+            price: price,
+            location: location,
+            images: images,
+            currency: selectedCurrency
+          })}
         />
         <PhotoModal
           isModalVisible={isModalVisible}
@@ -271,5 +282,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ListingForm;
+export default withNavigation(ListingForm);
 
