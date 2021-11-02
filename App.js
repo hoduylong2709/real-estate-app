@@ -10,6 +10,7 @@ import { Provider as AuthProvider } from './src/context/AuthContext';
 import { Provider as CategoryProvider } from './src/context/CategoryContext';
 import { Provider as LocationProvider } from './src/context/LocationContext';
 import { Provider as ListingProvider } from './src/context/ListingContext';
+import { Provider as UserProvider } from './src/context/UserContext';
 import OnboardScreen from './src/screens/OnboardScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
@@ -18,7 +19,6 @@ import VerifyScreen from './src/screens/VerifyScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import CategoriesScreen from './src/screens/CategoriesScreen';
 import ChatScreen from './src/screens/ChatScreen';
-import SearchScreen from './src/screens/SearchScreen';
 import DetailListingScreen from './src/screens/DetailListingScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AddListingScreen from './src/screens/AddListingScreen';
@@ -35,7 +35,6 @@ const loginFlow = createStackNavigator({
 const homeFlow = createStackNavigator({
   Home: HomeScreen,
   DetailListing: DetailListingScreen,
-  Profile: ProfileScreen,
   AddListing: AddListingScreen,
   ListingFilters: ListingFiltersScreen
 }, {
@@ -63,7 +62,7 @@ const mainFlow = createBottomTabNavigator({
   homeFlow,
   Categories: CategoriesScreen,
   Chat: ChatScreen,
-  Search: SearchScreen
+  Profile: ProfileScreen
 });
 
 const switchNavigator = createSwitchNavigator({
@@ -77,16 +76,18 @@ const App = createAppContainer(switchNavigator);
 
 export default () => {
   return (
-    <ListingProvider>
-      <LocationProvider>
-        <CategoryProvider>
-          <AuthProvider>
-            <OnboardProvider>
-              <App ref={(navigator) => { setNavigator(navigator) }} />
-            </OnboardProvider>
-          </AuthProvider>
-        </CategoryProvider>
-      </LocationProvider>
-    </ListingProvider>
+    <UserProvider>
+      <ListingProvider>
+        <LocationProvider>
+          <CategoryProvider>
+            <AuthProvider>
+              <OnboardProvider>
+                <App ref={(navigator) => { setNavigator(navigator) }} />
+              </OnboardProvider>
+            </AuthProvider>
+          </CategoryProvider>
+        </LocationProvider>
+      </ListingProvider>
+    </UserProvider>
   );
 };

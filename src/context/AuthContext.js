@@ -37,8 +37,9 @@ const login = dispatch => async ({ email, password }) => {
   try {
     dispatch({ type: 'auth_start' });
     const response = await realEstateApi.post('/users/login', { email, password });
-    if (response.data.token) {
+    if (response.data.token && response.data.user) {
       await AsyncStorage.setItem('token', response.data.token);
+      await AsyncStorage.setItem('userInfo', JSON.stringify(response.data.user));
       dispatch({ type: 'login', payload: response.data.token });
       navigate('Home');
     } else {

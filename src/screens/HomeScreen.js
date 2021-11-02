@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import { Avatar, Text } from 'react-native-elements';
+import { Text } from 'react-native-elements';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import { Context as CategoryContext } from '../context/CategoryContext';
@@ -45,10 +45,12 @@ HomeScreen.navigationOptions = ({ navigation }) => {
     headerLeft: () => (
       <TouchableOpacity
         activeOpacity={0.5}
-        onPress={() => navigation.navigate('Profile')}
       >
         <View style={{ marginLeft: 15 }}>
-          <Avatar rounded source={require('../../assets/user.png')} />
+          <Image
+            source={require('../../assets/welcome-logo.png')}
+            style={{ width: 35, height: 35 }}
+          />
         </View>
       </TouchableOpacity>
     ),
