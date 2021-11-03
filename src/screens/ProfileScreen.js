@@ -11,7 +11,7 @@ import ProfileOption from '../components/ProfileOption';
 import Spacer from './../components/Spacer';
 import AvatarImageModal from '../components/AvatarImageModal';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const { logout } = useContext(AuthContex);
   const { deleteAvatar, postAvatar } = useContext(UserContext);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -96,6 +96,7 @@ const ProfileScreen = () => {
       <View>
         <TouchableOpacity
           activeOpacity={0.5}
+          onPress={() => navigation.navigate('MyListing')}
         >
           <ProfileOption
             optionName='My Listings'
@@ -158,8 +159,8 @@ const ProfileScreen = () => {
 
 ProfileScreen.navigationOptions = () => {
   return {
-    tabBarLabel: () => { return null },
-    tabBarIcon: ({ focused }) => <MaterialCommunityIcons name='account' size={constants.TAB_BAR_ICON_SIZE} color={focused ? constants.MAIN_COLOR : 'grey'} />
+    title: 'My Profile',
+    headerTitleAlign: 'center'
   };
 };
 
@@ -167,7 +168,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 20,
     backgroundColor: 'white'
   },
   logoutButton: {

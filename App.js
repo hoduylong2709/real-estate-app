@@ -2,7 +2,7 @@ import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { setNavigator } from './src/navigationRef';
 import * as constants from './src/constants';
 import { Provider as OnboardProvider } from './src/context/OnboardContext';
@@ -24,6 +24,7 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import AddListingScreen from './src/screens/AddListingScreen';
 import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
 import ListingFiltersScreen from './src/screens/ListingFiltersScreen';
+import MyListingScreen from './src/screens/MyListingScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -58,11 +59,35 @@ homeFlow.navigationOptions = ({ navigation }) => {
   };
 };
 
+const profileFlow = createStackNavigator({
+  Profile: ProfileScreen,
+  MyListing: MyListingScreen
+}, {
+  defaultNavigationOptions: {
+    headerTitleAlign: 'center'
+  }
+});
+
+profileFlow.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+  if (routeName === 'MyListing') {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarLabel: () => { return null },
+    tabBarIcon: ({ focused }) => <MaterialCommunityIcons name='account' size={constants.TAB_BAR_ICON_SIZE} color={focused ? constants.MAIN_COLOR : 'grey'} />,
+    tabBarVisible
+  };
+};
+
 const mainFlow = createBottomTabNavigator({
   homeFlow,
   Categories: CategoriesScreen,
   Chat: ChatScreen,
-  Profile: ProfileScreen
+  profileFlow
 });
 
 const switchNavigator = createSwitchNavigator({

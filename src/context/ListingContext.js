@@ -8,6 +8,8 @@ const listingReducer = (state, action) => {
       return { ...state, loading: true };
     case 'create_listing':
       return { errorMessage: '', loading: false };
+    case 'fetch_listings':
+      return { ...state, listings: action.payload };
     case 'add_error':
       return { ...state, errorMessage: action.payload, loading: false };
     case 'clear_error_message':
@@ -57,12 +59,17 @@ const createListing = dispatch => async (
   }
 };
 
+const fetchListings = dispatch => async () => {
+  const response = await realEstateApi.get('/listings');
+  dispatch({ type: 'fetch_listings', payload: response.data });
+};
+
 const clearErrorMessage = dispatch => () => {
   dispatch({ type: 'clear_error_message' });
 };
 
 export const { Provider, Context } = createDataContext(
   listingReducer,
-  { createListing, clearErrorMessage },
-  { errorMessage: '', loading: false }
+  { createListing, clearErrorMessage, fetchListings },
+  { errorMessage: '', loading: false, listings: [] }
 );
