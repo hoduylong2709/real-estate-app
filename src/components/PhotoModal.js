@@ -5,7 +5,7 @@ import Modal from 'react-native-modal';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 
-const PhotoModal = ({ isModalVisible, closeModal, pickImage }) => {
+const PhotoModal = ({ isModalVisible, closeModal, pickImage, captureImage }) => {
   return (
     <View>
       <Modal
@@ -18,6 +18,7 @@ const PhotoModal = ({ isModalVisible, closeModal, pickImage }) => {
           <TouchableOpacity
             activeOpacity={0.5}
             style={styles.option}
+            onPress={captureImage}
           >
             <AntDesign name='camera' size={24} color='grey' style={{ marginRight: 10 }} />
             <Text h5>Take photo from camera</Text>
