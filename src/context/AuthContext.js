@@ -51,6 +51,21 @@ const login = dispatch => async ({ email, password }) => {
   }
 };
 
+const loginWithGoogle = dispatch => async ({ firstName, lastName, email, userId, idToken, avatar }) => {
+  try {
+    dispatch({ type: 'auth_start' });
+    const response = await realEstateApi.post('/users/loginWithGoogle', { firstName, lastName, email, userId, idToken, avatar });
+    if (response.data.idToken && response.data.user) {
+      await AsyncStorage.setItem('token', response.data.idToken);
+      await AsyncStorage.setItem('userInfo', JSON.stringify(response.data.user));
+      dispatch({ type: 'login', payload: response.data.idToken });
+      navigate('Home');
+    }
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Email was used!' });
+  }
+};
+
 const signup = dispatch => async ({ firstName, lastName, email, password }) => {
   try {
     dispatch({ type: 'auth_start' });
@@ -91,6 +106,6 @@ const clearErrorMessage = dispatch => () => {
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { login, tryLocalLogin, signup, verify, logout, clearErrorMessage },
+  { login, tryLocalLogin, signup, verify, logout, clearErrorMessage, loginWithGoogle },
   { token: null, errorMessage: '', loading: false }
 );

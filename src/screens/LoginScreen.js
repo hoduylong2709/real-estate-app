@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Text, Input, Button } from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { MaterialIcons, Entypo, FontAwesome } from '@expo/vector-icons';
+import * as Google from 'expo-google-app-auth';
 import { Formik } from 'formik';
 import * as constants from '../constants';
 import * as validationSchema from '../validationSchema';
@@ -12,7 +13,38 @@ import { Context as AuthContext } from '../context/AuthContext';
 import ErrorModal from '../components/ErrorModal';
 
 const LoginScreen = () => {
-  const { login, clearErrorMessage, state: { loading, errorMessage } } = useContext(AuthContext);
+  const { login, clearErrorMessage, state: { loading, errorMessage }, loginWithGoogle } = useContext(AuthContext);
+  const [googleSubmitting, setGoogleSubmitting] = useState(false);
+
+  const handleGoogleLogin = () => {
+    setGoogleSubmitting(true);
+
+    const config = {
+      iosClientId: '977430966128-qj91b6b48ena0dc6nc7tffmqgiheke17.apps.googleusercontent.com',
+      androidClientId: '977430966128-pp9g5nrlq86j4jrb4ra665q5t8lkmrku.apps.googleusercontent.com',
+      scopes: ['profile', 'email']
+    };
+
+    Google
+      .logInAsync(config)
+      .then(result => {
+        setGoogleSubmitting(false);
+        const { type, user, idToken } = result;
+        if (type === 'success') {
+          loginWithGoogle({
+            firstName: user.givenName,
+            lastName: user.familyName,
+            email: user.email,
+            userId: user.id,
+            idToken,
+            avatar: user.photoUrl
+          });
+        } else {
+          alert('Cannot login with Google account!');
+        }
+      })
+      .catch(error => console.log(error));
+  };
 
   return (
     <View style={styles.container}>
@@ -91,12 +123,13 @@ const LoginScreen = () => {
                 marginBottom: 10
               }}
               icon={<FontAwesome name="google" size={24} color="white" style={{ marginRight: 10 }} />}
+              onPress={handleGoogleLogin}
             />
           </>
         )}
       </Formik>
       <Spinner
-        visible={loading}
+        visible={loading || googleSubmitting}
       />
       <ErrorModal
         isError={errorMessage ? true : false}

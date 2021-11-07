@@ -75,11 +75,18 @@ const ProfileScreen = ({ navigation }) => {
           rounded
           source={{ uri: selectedImage }}
           size={100}
-        /> : (avatar ? <Avatar
-          rounded
-          source={{ uri: `data:image/png;base64,${avatar}` }}
-          size={100}
-        /> : <Avatar
+        /> : (avatar ? (
+          avatar.startsWith('https:') ?
+            <Avatar
+              rounded
+              source={{ uri: avatar }}
+              size={100}
+            /> : <Avatar
+              rounded
+              source={{ uri: `data:image/png;base64,${avatar}` }}
+              size={100}
+            />
+        ) : <Avatar
           rounded
           source={require('../../assets/user.png')}
           size={100}
