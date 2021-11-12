@@ -6,7 +6,7 @@ const CategoryCard = ({ imageUri, categoryName }) => {
     <View style={styles.container}>
       <View>
         <Image
-          source={{ uri: `data:image/png;base64,${imageUri}` }}
+          source={{ uri: imageUri }}
           style={styles.image}
         />
       </View>
