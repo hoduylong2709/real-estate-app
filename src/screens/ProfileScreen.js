@@ -1,7 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, TouchableOpacity, Dimensions, Text } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import { Avatar, Button } from 'react-native-elements';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { AntDesign, FontAwesome, MaterialCommunityIcons, Octicons, Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Context as AuthContex } from '../context/AuthContext';
@@ -13,22 +15,13 @@ import AvatarImageModal from '../components/AvatarImageModal';
 
 const ProfileScreen = ({ navigation }) => {
   const { logout } = useContext(AuthContex);
-  const { deleteAvatar, postAvatar } = useContext(UserContext);
+  const { deleteAvatar, postAvatar, state: { loading } } = useContext(UserContext);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isAvatarModalVisible, setAvatarModalVisible] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [avatar, setAvatar] = useState('');
-
-  useEffect(() => {
-    (async () => {
-      const userJson = await AsyncStorage.getItem('userInfo');
-      const userObj = JSON.parse(userJson);
-      setFirstName(userObj.firstName);
-      setLastName(userObj.lastName);
-      setAvatar(userObj.avatar);
-    })();
-  }, []);
+  const [publicIdCloudinary, setPublicIdCloudinary] = useState('');
 
   const uploadAvatar = async () => {
     if (Platform.OS !== 'web') {
@@ -40,13 +33,13 @@ const ProfileScreen = ({ navigation }) => {
 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
       aspect: [4, 3],
       quality: 1
     });
 
     if (!result.cancelled) {
       setSelectedImage(result.uri);
+      setAvatar(result.uri);
       postAvatar(result.uri);
       setAvatarModalVisible(false);
     }
@@ -56,9 +49,9 @@ const ProfileScreen = ({ navigation }) => {
     setAvatarModalVisible(true);
   };
 
-  const removeAvatar = async () => {
+  const removeAvatar = () => {
     if (avatar) {
-      deleteAvatar();
+      deleteAvatar(publicIdCloudinary);
     }
     setSelectedImage(null);
     setAvatarModalVisible(false);
@@ -67,6 +60,18 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <NavigationEvents onWillFocus={() => {
+        (async () => {
+          const userJson = await AsyncStorage.getItem('userInfo');
+          const userObj = JSON.parse(userJson);
+          setFirstName(userObj.firstName);
+          setLastName(userObj.lastName);
+          if (userObj.avatar) {
+            setAvatar(userObj.avatar);
+            setPublicIdCloudinary(userObj.publicIdCloudinary);
+          }
+        })();
+      }} />
       <TouchableOpacity
         activeOpacity={0.5}
         onPress={openAvatarModal}
@@ -75,17 +80,11 @@ const ProfileScreen = ({ navigation }) => {
           rounded
           source={{ uri: selectedImage }}
           size={100}
-        /> : (avatar ? (
-          avatar.startsWith('https:') ?
-            <Avatar
-              rounded
-              source={{ uri: avatar }}
-              size={100}
-            /> : <Avatar
-              rounded
-              source={{ uri: `data:image/png;base64,${avatar}` }}
-              size={100}
-            />
+        /> : (avatar ? (<Avatar
+          rounded
+          source={{ uri: avatar }}
+          size={100}
+        />
         ) : <Avatar
           rounded
           source={require('../../assets/user.png')}
@@ -160,6 +159,7 @@ const ProfileScreen = ({ navigation }) => {
         changeAvatar={uploadAvatar}
         removeAvatar={removeAvatar}
       />
+      <Spinner visible={loading} />
     </View>
   );
 };
@@ -167,7 +167,10 @@ const ProfileScreen = ({ navigation }) => {
 ProfileScreen.navigationOptions = () => {
   return {
     title: 'My Profile',
-    headerTitleAlign: 'center'
+    headerTitleAlign: 'center',
+    headerStyle: {
+      elevation: 0
+    }
   };
 };
 

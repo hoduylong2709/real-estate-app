@@ -1,21 +1,27 @@
 import React, { useContext } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, Image, Text } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import { Text } from 'react-native-elements';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import { Context as CategoryContext } from '../context/CategoryContext';
+import { Context as ListingContext } from '../context/ListingContext';
 import Spacer from './../components/Spacer';
 import CategoryCard from '../components/CategoryCard';
+import ListingCard from '../components/ListingCard';
+import { countAverageStars } from '../utils/countAverageStars';
 
 const HomeScreen = () => {
   const { fetchCategories, state: categories } = useContext(CategoryContext);
+  const { fetchPopularListings, state: { popularListings } } = useContext(ListingContext);
 
   return (
     <View style={styles.container}>
-      <NavigationEvents onWillFocus={fetchCategories} />
+      <NavigationEvents onWillFocus={() => {
+        fetchCategories();
+        fetchPopularListings();
+      }} />
       <Spacer>
-        <Text h4>Categories</Text>
+        <Text h4 style={styles.title}>Categories</Text>
       </Spacer>
       <View style={{ marginLeft: 15, marginRight: 15 }}>
         <ScrollView
@@ -25,7 +31,7 @@ const HomeScreen = () => {
         >
           {categories && categories.map(category => (
             <TouchableOpacity
-              activeOpacity={0.5}
+              activeOpacity={0.8}
               key={category._id}
             >
               <CategoryCard
@@ -36,6 +42,28 @@ const HomeScreen = () => {
           ))}
         </ScrollView>
       </View>
+      <Spacer>
+        <Text h4 style={styles.title}>Popular</Text>
+      </Spacer>
+      <ScrollView
+        scrollEventThrottle={16}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+      >
+        {popularListings && popularListings.map(
+          popularListing => (
+            <ListingCard
+              key={popularListing._id}
+              title={popularListing.title}
+              price={popularListing.price.value}
+              currency={popularListing.price.currency === 'VND' ? 'VNĐ' : '$'}
+              location={popularListing.location.address}
+              stars={countAverageStars(popularListing.stars)}
+              photo={popularListing.photos[0]}
+            />
+          )
+        )}
+      </ScrollView>
     </View>
   );
 };
@@ -68,19 +96,28 @@ HomeScreen.navigationOptions = ({ navigation }) => {
           <MaterialIcons name="map" size={26} color={constants.MAIN_COLOR} />
         </TouchableOpacity>
       </View>
-    )
+    ),
+    headerStyle: {
+      elevation: 0
+    }
   };
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: 'white'
   },
   headerRight: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: 60,
     marginRight: 15
+  },
+  title: {
+    color: '#A6A6A6',
+    fontSize: 15,
+    fontWeight: 'bold'
   }
 });
 

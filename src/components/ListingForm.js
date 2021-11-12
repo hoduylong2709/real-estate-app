@@ -105,12 +105,16 @@ const ListingForm = ({ navigation }) => {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
+      // allowsEditing: true,
       aspect: [4, 3],
       quality: 1
     });
 
     if (!result.cancelled) {
+      if (images.length === 10) {
+        setModalVisible(false);
+        return;
+      }
       setImages([...images, result.uri]);
       setModalVisible(false);
     }
