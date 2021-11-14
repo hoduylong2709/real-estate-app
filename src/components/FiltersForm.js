@@ -12,7 +12,7 @@ import * as filterData from '../filterData';
 import { Context as ListingContext } from '../context/ListingContext';
 import ErrorModal from './ErrorModal';
 
-const FiltersForm = ({ filters, title, description, priceValue, location, images, categoryName, currency }) => {
+const FiltersForm = ({ filters, title, description, priceValue, location, categoryName, currency }) => {
   const [rentOrBuy, setRentOrBuy] = useState('');
   const [squareFeet, setSquareFeet] = useState('');
   const [bedrooms, setBedrooms] = useState(0);
@@ -21,7 +21,7 @@ const FiltersForm = ({ filters, title, description, priceValue, location, images
   const [isCloseToPublicTransportation, setCloseToPublicTransportation] = useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [date, setDate] = useState('');
-  const { createListing, clearErrorMessage, state: { loading, errorMessage } } = useContext(ListingContext);
+  const { createListing, clearErrorMessage, state: { loading, errorMessage, photos } } = useContext(ListingContext);
 
   const handleDateConfirm = date => {
     setDate(moment(date).format('MM/YYYY'));
@@ -62,7 +62,7 @@ const FiltersForm = ({ filters, title, description, priceValue, location, images
       price,
       category,
       location,
-      images
+      photos
     };
 
     createListing(listingInfo);

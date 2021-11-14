@@ -1,3 +1,5 @@
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import createDataContext from './createDataContext';
 import realEstateApi from '../api/realEstate';
 import { navigate } from '../navigationRef';
@@ -6,8 +8,16 @@ const listingReducer = (state, action) => {
   switch (action.type) {
     case 'create_start':
       return { ...state, loading: true };
+    case 'upload_image':
+      return { ...state, loading: false, photos: [...state.photos, action.payload], errorMessage: '' };
+    case 'delete_image':
+      return {
+        ...state,
+        errorMessage: '',
+        photos: state.photos.filter(photo => photo.publicId !== action.payload)
+      };
     case 'create_listing':
-      return { errorMessage: '', loading: false };
+      return { ...state, errorMessage: '', loading: false };
     case 'fetch_listings':
       return { ...state, listings: action.payload };
     case 'fetch_popular_listings':
@@ -21,41 +31,66 @@ const listingReducer = (state, action) => {
   }
 };
 
+const uploadImageCloudinary = dispatch => async imageUri => {
+  dispatch({ type: 'create_start' })
+  const formData = new FormData();
+  const file = {
+    name: 'user_listing.jpg',
+    uri: imageUri,
+    type: 'image/jpg'
+  };
+
+  formData.append('file', file);
+  formData.append('upload_preset', '_RealEstate');
+  formData.append('cloud_name', 'longhoduy');
+  formData.append('folder', 'Listing');
+
+  try {
+    const response = await axios.post('https://api.cloudinary.com/v1_1/longhoduy/image/upload', formData);
+    dispatch({ type: 'upload_image', payload: { imageUrl: response.data.url, publicId: response.data.public_id, localUri: imageUri } });
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Cannot upload photo of listing. Please try again!' });
+  }
+};
+
+const deleteImageCloudinary = dispatch => async publicId => {
+  const token = await AsyncStorage.getItem('token');
+  try {
+    await realEstateApi.delete('/listings/cloudinary', {
+      headers: {
+        Authorization: token
+      },
+      data: {
+        publicId
+      }
+    });
+    dispatch({ type: 'delete_image', payload: publicId });
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Cannot delete photo of listing. Please try again!' });
+  }
+};
+
 const createListing = dispatch => async (
   { title,
     description,
     price,
     category,
     location,
-    images
+    photos
   }
 ) => {
   dispatch({ type: 'create_start' });
-  const formData = new FormData();
-  for (let i = 0; i < images.length; i++) {
-    const file = {
-      name: `photo_${i}.jpg`,
-      uri: images[i],
-      type: 'image/jpg'
-    };
-    formData.append('photos', file);
-  }
   try {
-    const response = await realEstateApi.post('/listings', {
+    await realEstateApi.post('/listings', {
       title,
       description,
       price,
       category,
-      location
+      location,
+      photos
     });
-    if (response.data.listing._id) {
-      const config = {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      };
-      await realEstateApi.post(`/listings/photos/${response.data.listing._id}`, formData, config);
-      dispatch({ type: 'create_listing' });
-      navigate('Home');
-    }
+    dispatch({ type: 'create_listing' });
+    navigate('Home');
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'Cannot create your listing. Please try again!' });
   }
@@ -77,6 +112,6 @@ const clearErrorMessage = dispatch => () => {
 
 export const { Provider, Context } = createDataContext(
   listingReducer,
-  { createListing, clearErrorMessage, fetchListings, fetchPopularListings },
-  { errorMessage: '', loading: false, listings: [], popularListings: [] }
+  { createListing, clearErrorMessage, fetchListings, fetchPopularListings, uploadImageCloudinary, deleteImageCloudinary },
+  { errorMessage: '', loading: false, listings: [], popularListings: [], photos: [] }
 );

@@ -1,9 +1,8 @@
 import React, { useContext, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View, TouchableOpacity, Dimensions, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Dimensions, Text, ActivityIndicator } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Avatar, Button } from 'react-native-elements';
-import Spinner from 'react-native-loading-spinner-overlay';
 import { AntDesign, FontAwesome, MaterialCommunityIcons, Octicons, Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Context as AuthContex } from '../context/AuthContext';
@@ -75,7 +74,14 @@ const ProfileScreen = ({ navigation }) => {
       <TouchableOpacity
         activeOpacity={0.5}
         onPress={openAvatarModal}
+        style={styles.avatarContainer}
       >
+        {
+          loading &&
+          <View style={styles.loading}>
+            <ActivityIndicator size='small' color='white' />
+          </View>
+        }
         {selectedImage ? <Avatar
           rounded
           source={{ uri: selectedImage }}
@@ -159,7 +165,6 @@ const ProfileScreen = ({ navigation }) => {
         changeAvatar={uploadAvatar}
         removeAvatar={removeAvatar}
       />
-      <Spinner visible={loading} />
     </View>
   );
 };
@@ -185,7 +190,20 @@ const styles = StyleSheet.create({
   logoutButton: {
     width: Dimensions.get('window').width * 0.85,
     marginTop: 20
-  }
+  },
+  avatarContainer: {
+    alignItems: 'center'
+  },
+  loading: {
+    position: 'absolute',
+    zIndex: 1,
+    backgroundColor: 'black',
+    opacity: 0.5,
+    height: '100%',
+    width: '27.5%',
+    justifyContent: 'center',
+    borderRadius: 53
+  },
 });
 
 export default ProfileScreen;

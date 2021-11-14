@@ -1,12 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 
-const CategoryCard = ({ imageUri, categoryName }) => {
+const CategoryCard = ({ imageUrl, categoryName }) => {
   return (
     <View style={styles.container}>
       <View>
         <Image
-          source={{ uri: imageUri }}
+          source={{ uri: imageUrl }}
           style={styles.image}
         />
       </View>

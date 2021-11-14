@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TextInput, Image, Platform, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, Platform, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import CurrencyInput from 'react-native-currency-input';
 import ModalSelector from 'react-native-modal-selector';
@@ -15,6 +15,7 @@ import ConfirmationModal from './ConfirmationModal';
 import { Context as LocationContext } from '../context/LocationContext';
 import MapModal from './MapModal';
 import CameraPreview from './CameraPreview';
+import { Context as ListingContext } from '../context/ListingContext';
 
 const ListingForm = ({ navigation }) => {
   const [title, setTitle] = useState('');
@@ -34,6 +35,7 @@ const ListingForm = ({ navigation }) => {
   const [capturedImage, setCapturedImage] = useState(null);
   const { state: categories } = useContext(CategoryContext);
   const { state: { location } } = useContext(LocationContext);
+  const { state: { loading, photos }, uploadImageCloudinary, deleteImageCloudinary } = useContext(ListingContext);
   const cameraRef = useRef();
 
 
@@ -94,6 +96,8 @@ const ListingForm = ({ navigation }) => {
 
   const savePhoto = () => {
     setImages([...images, capturedImage.uri]);
+    setSelectedImage(capturedImage.uri);
+    uploadImageCloudinary(capturedImage.uri);
     setStartCamera(false);
     setModalVisible(false);
     setCapturedImage(null);
@@ -105,7 +109,6 @@ const ListingForm = ({ navigation }) => {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      // allowsEditing: true,
       aspect: [4, 3],
       quality: 1
     });
@@ -116,13 +119,21 @@ const ListingForm = ({ navigation }) => {
         return;
       }
       setImages([...images, result.uri]);
+      setSelectedImage(result.uri);
       setModalVisible(false);
+      uploadImageCloudinary(result.uri);
     }
+  };
+
+  const getPublicIdByUri = (imageUri, photos) => {
+    const found = photos.find(photo => photo.localUri === imageUri);
+    return found.publicId;
   };
 
   const removeImage = selectedImage => {
     const newImages = images.filter(image => image !== selectedImage);
     setImages(newImages);
+    deleteImageCloudinary(getPublicIdByUri(selectedImage, photos));
     setSelectedImage(null);
     setConfirmationModalVisible(false);
   };
@@ -324,7 +335,17 @@ const ListingForm = ({ navigation }) => {
                         setConfirmationModalVisible(true);
                         setSelectedImage(image);
                       }}
+                      style={styles.imageContainer}
                     >
+                      {
+                        loading && selectedImage === image &&
+                        <View style={styles.loading}>
+                          <ActivityIndicator
+                            size='small'
+                            color='white'
+                          />
+                        </View>
+                      }
                       <Image source={{ uri: image }} style={styles.image} />
                     </TouchableOpacity>
                   ))}
@@ -353,7 +374,6 @@ const ListingForm = ({ navigation }) => {
                   description: description,
                   price: price,
                   location: location,
-                  images: images,
                   currency: selectedCurrency
                 })}
               />
@@ -425,11 +445,25 @@ const styles = StyleSheet.create({
     height: 300,
     resizeMode: "contain"
   },
+  imageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 5
+  },
+  loading: {
+    position: 'absolute',
+    zIndex: 1,
+    backgroundColor: 'black',
+    opacity: 0.5,
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+    borderRadius: 10
+  },
   image: {
     width: 70,
     height: 70,
-    borderRadius: 10,
-    marginRight: 5
+    borderRadius: 10
   },
   nextButton: {
     backgroundColor: constants.MAIN_COLOR,

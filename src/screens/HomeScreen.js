@@ -35,7 +35,7 @@ const HomeScreen = () => {
               key={category._id}
             >
               <CategoryCard
-                imageUri={category.image}
+                imageUrl={category.image}
                 categoryName={category.name}
               />
             </TouchableOpacity>

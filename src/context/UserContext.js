@@ -20,7 +20,7 @@ const postAvatar = dispatch => async imageUri => {
   dispatch({ type: 'process_start' });
   const formData = new FormData();
   const file = {
-    name: `user_avatar.jpg`,
+    name: 'user_avatar.jpg',
     uri: imageUri,
     type: 'image/jpg'
   };

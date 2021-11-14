@@ -34,7 +34,7 @@ const ListingCard = ({ title, price, currency, location, stars, photo }) => {
           />
         </TouchableOpacity>
         <Image
-          source={{ uri: `data:image/png;base64,${photo}` }}
+          source={{ uri: photo.imageUrl }}
           style={styles.cardImage}
           resizeMode='cover'
         />
