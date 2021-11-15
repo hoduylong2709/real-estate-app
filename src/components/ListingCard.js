@@ -19,7 +19,7 @@ const ListingCard = ({ title, price, currency, location, stars, photo }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      style={{ marginLeft: 15, marginRight: 15, marginTop: 3 }}
+      style={{ marginLeft: 15, marginRight: 15, marginTop: 3, marginBottom: 20 }}
     >
       <View style={styles.card}>
         <TouchableOpacity

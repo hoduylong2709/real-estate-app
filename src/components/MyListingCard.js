@@ -10,7 +10,7 @@ const MyListingCard = ({ title, location, stars, photos }) => {
       <View style={styles.container}>
         <View>
           <Image
-            source={{ uri: `data:image/png;base64,${photos[0]}` }}
+            source={{ uri: photos[0].imageUrl }}
             style={styles.image}
           />
         </View>

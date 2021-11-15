@@ -18,10 +18,12 @@ const listingReducer = (state, action) => {
       };
     case 'create_listing':
       return { ...state, errorMessage: '', loading: false };
+    case 'start_fetching':
+      return { ...state, loading: true };
     case 'fetch_listings':
-      return { ...state, listings: action.payload };
+      return { ...state, listings: action.payload, loading: false };
     case 'fetch_popular_listings':
-      return { ...state, popularListings: action.payload };
+      return { ...state, popularListings: action.payload, loading: false };
     case 'add_error':
       return { ...state, errorMessage: action.payload, loading: false };
     case 'clear_error_message':
@@ -97,11 +99,13 @@ const createListing = dispatch => async (
 };
 
 const fetchListings = dispatch => async () => {
+  dispatch({ type: 'start_fetching' });
   const response = await realEstateApi.get('/listings');
   dispatch({ type: 'fetch_listings', payload: response.data });
 };
 
 const fetchPopularListings = dispatch => async () => {
+  dispatch({ type: 'start_fetching' });
   const response = await realEstateApi.get('/listings/popular');
   dispatch({ type: 'fetch_popular_listings', payload: response.data });
 };

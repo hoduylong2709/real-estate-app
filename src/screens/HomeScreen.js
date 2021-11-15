@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, Image, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, Image, Text, ActivityIndicator } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
@@ -11,8 +11,8 @@ import ListingCard from '../components/ListingCard';
 import { countAverageStars } from '../utils/countAverageStars';
 
 const HomeScreen = () => {
-  const { fetchCategories, state: categories } = useContext(CategoryContext);
-  const { fetchPopularListings, state: { popularListings } } = useContext(ListingContext);
+  const { fetchCategories, state: { categories, categoryLoading } } = useContext(CategoryContext);
+  const { fetchPopularListings, state: { popularListings, loading } } = useContext(ListingContext);
 
   return (
     <View style={styles.container}>
@@ -24,6 +24,7 @@ const HomeScreen = () => {
         <Text h4 style={styles.title}>Categories</Text>
       </Spacer>
       <View style={{ marginLeft: 15, marginRight: 15 }}>
+        {categoryLoading && <ActivityIndicator size='small' color='grey' />}
         <ScrollView
           scrollEventThrottle={16}
           horizontal={true}
@@ -45,25 +46,28 @@ const HomeScreen = () => {
       <Spacer>
         <Text h4 style={styles.title}>Popular</Text>
       </Spacer>
-      <ScrollView
-        scrollEventThrottle={16}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      >
-        {popularListings && popularListings.map(
-          popularListing => (
-            <ListingCard
-              key={popularListing._id}
-              title={popularListing.title}
-              price={popularListing.price.value}
-              currency={popularListing.price.currency === 'VND' ? 'VNĐ' : '$'}
-              location={popularListing.location.address}
-              stars={countAverageStars(popularListing.stars)}
-              photo={popularListing.photos[0]}
-            />
-          )
-        )}
-      </ScrollView>
+      <View>
+        {loading && <ActivityIndicator size='small' color='grey' />}
+        <ScrollView
+          scrollEventThrottle={16}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          {popularListings && popularListings.map(
+            popularListing => (
+              <ListingCard
+                key={popularListing._id}
+                title={popularListing.title}
+                price={popularListing.price.value}
+                currency={popularListing.price.currency === 'VND' ? 'VNĐ' : '$'}
+                location={popularListing.location.address}
+                stars={countAverageStars(popularListing.stars)}
+                photo={popularListing.photos[0]}
+              />
+            )
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 };

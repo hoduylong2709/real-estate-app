@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, ActivityIndicator } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import * as constants from '../constants';
 import MyListingCard from '../components/MyListingCard';
@@ -7,11 +7,12 @@ import { Context as ListingContext } from '../context/ListingContext';
 import { countAverageStars } from '../utils/countAverageStars';
 
 const MyListingScreen = () => {
-  const { state: { listings }, fetchListings } = useContext(ListingContext);
+  const { state: { listings, loading }, fetchListings } = useContext(ListingContext);
 
   return (
     <View style={styles.container}>
       <NavigationEvents onWillFocus={fetchListings} />
+      {loading && <ActivityIndicator size='small' color='grey' />}
       <ScrollView>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
           {listings && listings.map(
