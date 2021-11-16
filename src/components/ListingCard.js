@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
+import { Context as ListingContext } from '../context/ListingContext';
 const { width } = Dimensions.get('screen');
 
-const ListingCard = ({ title, price, currency, location, stars, photo }) => {
-  const [iconColor, setIconColor] = useState('white');
+const ListingCard = ({ listingId, title, price, currency, location, stars, photo, isFavorite }) => {
+  const [favoriteListing, setFavoriteListing] = useState(isFavorite);
+  const { addFavoriteUser, deleteFavoriteUser } = useContext(ListingContext);
 
   const pressIcon = () => {
-    if (iconColor === 'white') {
-      setIconColor(constants.MAIN_COLOR);
+    if (favoriteListing) {
+      deleteFavoriteUser(listingId);
+      setFavoriteListing(false);
     } else {
-      setIconColor('white');
+      addFavoriteUser(listingId);
+      setFavoriteListing(true);
     }
   };
 
@@ -30,7 +34,7 @@ const ListingCard = ({ title, price, currency, location, stars, photo }) => {
           <MaterialIcons
             name='favorite'
             size={28}
-            color={iconColor}
+            color={favoriteListing ? constants.MAIN_COLOR : 'white'}
           />
         </TouchableOpacity>
         <Image

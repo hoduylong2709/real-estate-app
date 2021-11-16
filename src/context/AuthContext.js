@@ -25,9 +25,11 @@ const authReducer = (state, action) => {
 
 const tryLocalLogin = dispatch => async () => {
   const token = await AsyncStorage.getItem('token');
+  const userJson = await AsyncStorage.getItem('userInfo');
+  const userObj = JSON.parse(userJson);
   if (token) {
     dispatch({ type: 'login', payload: token });
-    navigate('Home');
+    navigate('Home', { userId: userObj._id });
   } else {
     navigate('Welcome');
   }

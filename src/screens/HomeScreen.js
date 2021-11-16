@@ -10,9 +10,14 @@ import CategoryCard from '../components/CategoryCard';
 import ListingCard from '../components/ListingCard';
 import { countAverageStars } from '../utils/countAverageStars';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const { fetchCategories, state: { categories, categoryLoading } } = useContext(CategoryContext);
   const { fetchPopularListings, state: { popularListings, loading } } = useContext(ListingContext);
+  const userId = navigation.getParam('userId');
+
+  const checkFavorite = listing => {
+    return listing.favoriteUsers.includes(userId);
+  };
 
   return (
     <View style={styles.container}>
@@ -57,12 +62,14 @@ const HomeScreen = () => {
             popularListing => (
               <ListingCard
                 key={popularListing._id}
+                listingId={popularListing._id}
                 title={popularListing.title}
                 price={popularListing.price.value}
                 currency={popularListing.price.currency === 'VND' ? 'VNĐ' : '$'}
                 location={popularListing.location.address}
                 stars={countAverageStars(popularListing.stars)}
                 photo={popularListing.photos[0]}
+                isFavorite={checkFavorite(popularListing)}
               />
             )
           )}
