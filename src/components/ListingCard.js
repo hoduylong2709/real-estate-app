@@ -6,9 +6,9 @@ import * as constants from '../constants';
 import { Context as ListingContext } from '../context/ListingContext';
 const { width } = Dimensions.get('screen');
 
-const ListingCard = ({ listingId, title, price, currency, location, stars, photo, isFavorite }) => {
-  const [favoriteListing, setFavoriteListing] = useState(isFavorite);
-  const { addFavoriteUser, deleteFavoriteUser } = useContext(ListingContext);
+const ListingCard = ({ listingId, title, price, currency, location, stars, photos, navigation, userId, favoriteUsers }) => {
+  const [favoriteListing, setFavoriteListing] = useState(favoriteUsers.includes(userId) ? true : false);
+  const { addFavoriteUser, deleteFavoriteUser, increaseViews } = useContext(ListingContext);
 
   const pressIcon = () => {
     if (favoriteListing) {
@@ -22,8 +22,18 @@ const ListingCard = ({ listingId, title, price, currency, location, stars, photo
 
   return (
     <TouchableOpacity
-      activeOpacity={0.9}
       style={{ marginLeft: 15, marginRight: 15, marginTop: 3, marginBottom: 20 }}
+      activeOpacity={0.9}
+      onPress={() => {
+        increaseViews(listingId);
+        navigation.navigate('ListingDetail', {
+          listingProperties: {
+            photos,
+            isFavorite: favoriteListing,
+            pressIcon
+          }
+        });
+      }}
     >
       <View style={styles.card}>
         <TouchableOpacity
@@ -34,11 +44,11 @@ const ListingCard = ({ listingId, title, price, currency, location, stars, photo
           <MaterialIcons
             name='favorite'
             size={28}
-            color={favoriteListing ? constants.MAIN_COLOR : 'white'}
+            color={favoriteListing ? '#ea9999' : 'white'}
           />
         </TouchableOpacity>
         <Image
-          source={{ uri: photo.imageUrl }}
+          source={{ uri: photos[0].imageUrl }}
           style={styles.cardImage}
           resizeMode='cover'
         />

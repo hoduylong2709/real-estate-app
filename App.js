@@ -19,12 +19,12 @@ import VerifyScreen from './src/screens/VerifyScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import CategoriesScreen from './src/screens/CategoriesScreen';
 import ChatScreen from './src/screens/ChatScreen';
-import DetailListingScreen from './src/screens/DetailListingScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AddListingScreen from './src/screens/AddListingScreen';
 import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
 import ListingFiltersScreen from './src/screens/ListingFiltersScreen';
 import MyListingScreen from './src/screens/MyListingScreen';
+import ListingDetailScreen from './src/screens/ListingDetailScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -35,9 +35,9 @@ const loginFlow = createStackNavigator({
 
 const homeFlow = createStackNavigator({
   Home: HomeScreen,
-  DetailListing: DetailListingScreen,
   AddListing: AddListingScreen,
-  ListingFilters: ListingFiltersScreen
+  ListingFilters: ListingFiltersScreen,
+  ListingDetail: ListingDetailScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
@@ -48,7 +48,7 @@ homeFlow.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName === 'AddListing' || routeName === 'ListingFilters') {
+  if (routeName === 'AddListing' || routeName === 'ListingFilters' || routeName === 'ListingDetail') {
     tabBarVisible = false;
   }
 

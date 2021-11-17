@@ -15,10 +15,6 @@ const HomeScreen = ({ navigation }) => {
   const { fetchPopularListings, state: { popularListings, loading } } = useContext(ListingContext);
   const userId = navigation.getParam('userId');
 
-  const checkFavorite = listing => {
-    return listing.favoriteUsers.includes(userId);
-  };
-
   return (
     <View style={styles.container}>
       <NavigationEvents onWillFocus={() => {
@@ -68,8 +64,10 @@ const HomeScreen = ({ navigation }) => {
                 currency={popularListing.price.currency === 'VND' ? 'VNĐ' : '$'}
                 location={popularListing.location.address}
                 stars={countAverageStars(popularListing.stars)}
-                photo={popularListing.photos[0]}
-                isFavorite={checkFavorite(popularListing)}
+                photos={popularListing.photos}
+                navigation={navigation}
+                userId={userId}
+                favoriteUsers={popularListing.favoriteUsers}
               />
             )
           )}

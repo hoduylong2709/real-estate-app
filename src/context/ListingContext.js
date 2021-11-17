@@ -118,12 +118,26 @@ const deleteFavoriteUser = dispatch => async id => {
   await realEstateApi.delete(`/listings/favorite/${id}`);
 };
 
+const increaseViews = dispatch => async id => {
+  await realEstateApi.post(`/listings/views/${id}`);
+};
+
 const clearErrorMessage = dispatch => () => {
   dispatch({ type: 'clear_error_message' });
 };
 
 export const { Provider, Context } = createDataContext(
   listingReducer,
-  { createListing, clearErrorMessage, fetchListings, fetchPopularListings, uploadImageCloudinary, deleteImageCloudinary, addFavoriteUser, deleteFavoriteUser },
+  {
+    createListing,
+    clearErrorMessage,
+    fetchListings,
+    fetchPopularListings,
+    uploadImageCloudinary,
+    deleteImageCloudinary,
+    addFavoriteUser,
+    deleteFavoriteUser,
+    increaseViews
+  },
   { errorMessage: '', loading: false, listings: [], popularListings: [], photos: [] }
 );
