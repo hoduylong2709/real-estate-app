@@ -6,8 +6,8 @@ import * as constants from '../constants';
 import { Context as ListingContext } from '../context/ListingContext';
 const { width } = Dimensions.get('screen');
 
-const ListingCard = ({ listingId, title, price, currency, location, stars, photos, navigation, userId, favoriteUsers }) => {
-  const [favoriteListing, setFavoriteListing] = useState(favoriteUsers.includes(userId) ? true : false);
+const ListingCard = ({ listingId, title, price, currency, location, stars, photos, navigation, isFavoriteByUser, numberOfRatings, properties }) => {
+  const [favoriteListing, setFavoriteListing] = useState(isFavoriteByUser);
   const { addFavoriteUser, deleteFavoriteUser, increaseViews } = useContext(ListingContext);
 
   const pressIcon = () => {
@@ -30,7 +30,12 @@ const ListingCard = ({ listingId, title, price, currency, location, stars, photo
           listingProperties: {
             photos,
             isFavorite: favoriteListing,
-            pressIcon
+            pressIcon,
+            title,
+            stars,
+            numberOfRatings,
+            location,
+            properties
           }
         });
       }}

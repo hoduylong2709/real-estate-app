@@ -43,7 +43,7 @@ const login = dispatch => async ({ email, password }) => {
       await AsyncStorage.setItem('token', response.data.token);
       await AsyncStorage.setItem('userInfo', JSON.stringify(response.data.user));
       dispatch({ type: 'login', payload: response.data.token });
-      navigate('Home');
+      navigate('Home', { userId: response.data.user._id });
     } else {
       dispatch({ type: 'signup' });
       navigate('Verify', { id: response.data.user._id });
@@ -61,7 +61,7 @@ const loginWithGoogle = dispatch => async ({ firstName, lastName, email, userId,
       await AsyncStorage.setItem('token', response.data.idToken);
       await AsyncStorage.setItem('userInfo', JSON.stringify(response.data.user));
       dispatch({ type: 'login', payload: response.data.idToken });
-      navigate('Home');
+      navigate('Home', { userId: response.data.user._id });
     }
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'Email was used!' });

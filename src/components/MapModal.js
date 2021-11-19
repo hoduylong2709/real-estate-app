@@ -5,11 +5,9 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import Modal from 'react-native-modal';
 import * as Location from 'expo-location';
 import * as constants from '../constants';
-import { Context as LocationContext } from '../context/LocationContext';
 
-const MapModal = ({ isModalVisible, closeModal }) => {
+const MapModal = ({ isModalVisible, closeModal, locationSubmit }) => {
   const [location, setLocation] = useState(null);
-  const { addLocation } = useContext(LocationContext);
 
   useEffect(() => {
     (async () => {
@@ -25,11 +23,6 @@ const MapModal = ({ isModalVisible, closeModal }) => {
       });
     })();
   }, []);
-
-  const locationSubmit = location => {
-    addLocation(location);
-    closeModal();
-  }
 
   return (
     <Modal

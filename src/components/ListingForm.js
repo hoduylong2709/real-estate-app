@@ -12,7 +12,6 @@ import { Context as CategoryContext } from '../context/CategoryContext';
 import * as constants from '../constants';
 import PhotoModal from './PhotoModal';
 import ConfirmationModal from './ConfirmationModal';
-import { Context as LocationContext } from '../context/LocationContext';
 import MapModal from './MapModal';
 import CameraPreview from './CameraPreview';
 import { Context as ListingContext } from '../context/ListingContext';
@@ -33,15 +32,19 @@ const ListingForm = ({ navigation }) => {
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
-  const { state: categories } = useContext(CategoryContext);
-  const { state: { location } } = useContext(LocationContext);
+  const { state: { categories } } = useContext(CategoryContext);
+  const [location, setLocation] = useState(null);
   const { state: { loading, photos }, uploadImageCloudinary, deleteImageCloudinary } = useContext(ListingContext);
   const cameraRef = useRef();
 
+  const locationSubmit = location => {
+    setLocation(location);
+    setMapModalVisible(false);
+  };
 
   const currencies = [
     { key: 1, label: 'USA' },
-    { key: 2, label: 'VND' }
+    { key: 2, label: 'VNĐ' }
   ];
 
   useEffect(() => {
@@ -271,7 +274,7 @@ const ListingForm = ({ navigation }) => {
                   delimiter=','
                   precision={0}
                   minValue={0}
-                  suffix={selectedCurrency === 'USA' ? ' $' : ' vnd'}
+                  suffix={selectedCurrency === 'USA' ? ' $' : ' vnđ'}
                   style={styles.priceInput}
                 />
                 <ModalSelector
@@ -391,6 +394,7 @@ const ListingForm = ({ navigation }) => {
               <MapModal
                 isModalVisible={isMapModalVisible}
                 closeModal={() => setMapModalVisible(false)}
+                locationSubmit={locationSubmit}
               />
             </View>
           </ScrollView>

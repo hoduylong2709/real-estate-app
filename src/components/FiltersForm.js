@@ -78,7 +78,7 @@ const FiltersForm = ({ filters, title, description, priceValue, location, catego
           filters.includes('hasRentOrBuy') &&
           <View style={{ flexDirection: 'column' }}>
             <View style={styles.filter}>
-              <Text style={styles.label}>Rent or sell</Text>
+              <Text style={styles.label}>For rent or buy</Text>
               <ModalSelector
                 data={filterData.RENT_OR_BUY_DATA}
                 selectStyle={{ padding: 3, borderWidth: 0 }}
@@ -122,8 +122,8 @@ const FiltersForm = ({ filters, title, description, priceValue, location, catego
             <View style={styles.filter}>
               <Text style={styles.label}>Bedrooms</Text>
               <NumericInput
-                value={baths}
-                onChange={setBaths}
+                value={bedrooms}
+                onChange={setBedrooms}
                 rounded
                 valueType='integer'
                 totalHeight={35}
@@ -143,8 +143,8 @@ const FiltersForm = ({ filters, title, description, priceValue, location, catego
             <View style={styles.filter}>
               <Text style={styles.label}>Baths</Text>
               <NumericInput
-                value={bedrooms}
-                onChange={setBedrooms}
+                value={baths}
+                onChange={setBaths}
                 rounded
                 valueType='integer'
                 totalHeight={35}

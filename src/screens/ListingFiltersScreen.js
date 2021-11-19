@@ -6,7 +6,7 @@ import { getCategoryByName, getCategoryFilters } from '../utils/categoryHelper';
 import FiltersForm from '../components/FiltersForm';
 
 const ListingFiltersScreen = ({ navigation }) => {
-  const { state: categories } = useContext(CategoryContext);
+  const { state: { categories } } = useContext(CategoryContext);
   const categoryName = navigation.getParam('categoryName');
   const category = getCategoryByName(categoryName, categories);
   const filters = getCategoryFilters(category);

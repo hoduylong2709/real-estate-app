@@ -8,7 +8,6 @@ import * as constants from './src/constants';
 import { Provider as OnboardProvider } from './src/context/OnboardContext';
 import { Provider as AuthProvider } from './src/context/AuthContext';
 import { Provider as CategoryProvider } from './src/context/CategoryContext';
-import { Provider as LocationProvider } from './src/context/LocationContext';
 import { Provider as ListingProvider } from './src/context/ListingContext';
 import { Provider as UserProvider } from './src/context/UserContext';
 import OnboardScreen from './src/screens/OnboardScreen';
@@ -103,15 +102,13 @@ export default () => {
   return (
     <UserProvider>
       <ListingProvider>
-        <LocationProvider>
-          <CategoryProvider>
-            <AuthProvider>
-              <OnboardProvider>
-                <App ref={(navigator) => { setNavigator(navigator) }} />
-              </OnboardProvider>
-            </AuthProvider>
-          </CategoryProvider>
-        </LocationProvider>
+        <CategoryProvider>
+          <AuthProvider>
+            <OnboardProvider>
+              <App ref={(navigator) => { setNavigator(navigator) }} />
+            </OnboardProvider>
+          </AuthProvider>
+        </CategoryProvider>
       </ListingProvider>
     </UserProvider>
   );

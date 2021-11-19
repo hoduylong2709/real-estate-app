@@ -1,7 +1,7 @@
 export const RENT_OR_BUY_DATA = [
   { key: 1, label: 'Any' },
-  { key: 2, label: 'Rent' },
-  { key: 3, label: 'Sell' },
+  { key: 2, label: 'For rent' },
+  { key: 3, label: 'For buy' },
 ];
 
 export const SQUARE_FEET_DATA = [
