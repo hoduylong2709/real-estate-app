@@ -1,19 +1,37 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
+import { Avatar } from 'react-native-elements';
+import MapView, { Marker, Callout } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import PropertyList from '../components/PropertyList';
+import { Context as UserContext } from '../context/UserContext';
+const { width } = Dimensions.get('screen');
 
 const ListingDetailScreen = ({ navigation }) => {
-  const { photos, isFavorite, pressIcon, title, stars, numberOfRatings, location, properties } = navigation.getParam('listingProperties');
+  const { owner, photos, isFavorite, pressIcon, title, stars, numberOfRatings, location, properties, description, price, currency } = navigation.getParam('listingProperties');
   const [favoriteListing, setFavoriteListing] = useState(isFavorite);
+  const [textShown, setTextShown] = useState(false); // To show the remaining text
+  const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
+  const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
+  const { state: { user }, getUserById } = useContext(UserContext);
+
+  const toggleNumberOfLines = () => {
+    setTextShown(!textShown);
+  };
+
+  const onTextLayout = e => {
+    setLengthMore(e.nativeEvent.lines.length > 2);
+  };
 
   return (
     <View style={styles.container}>
+      <NavigationEvents onWillFocus={() => getUserById(owner)} />
       <ScrollView showsVerticalScrollIndicator={true}>
         {/* House image */}
         <View style={styles.backgroundImageContainer}>
-          <ImageBackground style={styles.backgroudImage} source={{ uri: photos[0].imageUrl }} >
+          <ImageBackground style={styles.backgroudImage} source={{ uri: selectedPhoto }} >
             <View style={styles.header}>
               <TouchableOpacity
                 activeOpacity={0.5}
@@ -74,12 +92,122 @@ const ListingDetailScreen = ({ navigation }) => {
           </View>
           {/* Location text */}
           <Text style={{ fontSize: 15, color: '#A9A9A9', marginTop: 10 }}>
-            {location}
+            {location.address}
           </Text>
           {/* Properties Container */}
           <PropertyList
             properties={properties}
           />
+          <View style={{ marginTop: 10 }}>
+            <Text
+              style={{ color: '#A9A9A9' }}
+              numberOfLines={textShown ? undefined : 2}
+              onTextLayout={onTextLayout}
+            >
+              {description}
+            </Text>
+            {
+              lengthMore ?
+                <Text
+                  onPress={toggleNumberOfLines}
+                  style={{ color: '#A9A9A9', textDecorationLine: 'underline', textDecorationColor: '#f3f6f4' }}
+                >{textShown ? null : 'See more'}</Text> :
+                null
+            }
+          </View>
+          {/* Listing photos */}
+          <FlatList
+            contentContainerStyle={{ marginTop: 10 }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={item => item._id}
+            data={photos}
+            renderItem={({ item }) =>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => setSelectedPhoto(item.imageUrl)}
+              >
+                <Image
+                  source={{ uri: item.imageUrl }}
+                  style={styles.listingImage}
+                />
+              </TouchableOpacity>
+            }
+          />
+          {/* Price & contact container */}
+          <View style={styles.priceAndContactContainer}>
+            <View>
+              <Text
+                style={{ color: constants.MAIN_COLOR, fontWeight: 'bold', fontSize: 18 }}
+              >
+                {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{currency}
+              </Text>
+              <Text
+                style={{ fontSize: 14, color: constants.GREY_COLOR, fontWeight: 'bold' }}
+              >
+                Total Price
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity
+                style={styles.contactButton}
+                activeOpacity={0.85}
+              >
+                <Text
+                  style={{ color: 'white' }}
+                >
+                  Contact Owner
+                </Text>
+              </TouchableOpacity>
+              <View style={styles.ownerInfo}>
+                {
+                  user ?
+                    <Avatar
+                      rounded
+                      size='small'
+                      source={{ uri: user.avatar }}
+                    /> :
+                    <Avatar
+                      rounded
+                      size='small'
+                      source={require('../../assets/user.png')}
+                    />
+                }
+                {
+                  user &&
+                  <Text
+                    style={{ fontSize: 14, color: constants.GREY_COLOR, fontWeight: 'bold' }}
+                  >
+                    {user.firstName} {user.lastName}
+                  </Text>
+                }
+              </View>
+            </View>
+          </View>
+          {/* Map View */}
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+                latitudeDelta: 0.025,
+                longitudeDelta: 0.025
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude
+                }}
+                draggable={false}
+              >
+                <Callout>
+                  <Text>Listing location!</Text>
+                </Callout>
+              </Marker>
+            </MapView>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -150,6 +278,46 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  listingImage: {
+    width: width / 3 - 20,
+    height: 80,
+    marginRight: 10,
+    borderRadius: 10
+  },
+  priceAndContactContainer: {
+    height: 70,
+    backgroundColor: '#f6f6f6',
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10
+  },
+  contactButton: {
+    height: 46,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000',
+    borderRadius: 10,
+    paddingHorizontal: 15
+  },
+  ownerInfo: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginLeft: 10
+  },
+  mapContainer: {
+    height: 260,
+    backgroundColor: '#f3f6f4',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10
+  },
+  map: {
+    height: 250,
+    width: '97%'
+  }
 });
 
 export default ListingDetailScreen;

@@ -9,6 +9,8 @@ const userReducer = (state, action) => {
       return { ...state, loading: true };
     case 'post_avatar':
       return { errorMessage: '', loading: false };
+    case 'get_user':
+      return { errorMessage: '', user: action.payload };
     case 'add_error':
       return { errorMessage: action.payload, loading: false };
     default:
@@ -77,8 +79,17 @@ const deleteAvatar = dispatch => async publicIdCloudinary => {
   await AsyncStorage.setItem('userInfo', JSON.stringify(userObj));
 };
 
+const getUserById = dispatch => async id => {
+  try {
+    const response = await realEstateApi.get(`/users/${id}`);
+    dispatch({ type: 'get_user', payload: response.data });
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Something wrong. Please try again!' });
+  }
+};
+
 export const { Provider, Context } = createDataContext(
   userReducer,
-  { deleteAvatar, postAvatar },
-  { loading: false, errorMessage: '' }
+  { deleteAvatar, postAvatar, getUserById },
+  { loading: false, errorMessage: '', user: null }
 );

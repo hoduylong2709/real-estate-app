@@ -66,13 +66,15 @@ const HomeScreen = ({ navigation }) => {
                 title={popularListing.title}
                 price={popularListing.price.value}
                 currency={popularListing.price.currency === 'VNĐ' ? 'VNĐ' : '$'}
-                location={popularListing.location.address}
+                location={popularListing.location}
                 stars={countAverageStars(popularListing.stars)}
                 photos={popularListing.photos}
                 navigation={navigation}
                 isFavoriteByUser={checkFavorite(popularListing)}
                 numberOfRatings={popularListing.stars.length}
                 properties={popularListing.category}
+                description={popularListing.description}
+                owner={popularListing.owner}
               />
             )
           )}

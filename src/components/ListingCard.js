@@ -6,7 +6,7 @@ import * as constants from '../constants';
 import { Context as ListingContext } from '../context/ListingContext';
 const { width } = Dimensions.get('screen');
 
-const ListingCard = ({ listingId, title, price, currency, location, stars, photos, navigation, isFavoriteByUser, numberOfRatings, properties }) => {
+const ListingCard = ({ listingId, title, price, currency, location, stars, photos, navigation, isFavoriteByUser, numberOfRatings, properties, description, owner }) => {
   const [favoriteListing, setFavoriteListing] = useState(isFavoriteByUser);
   const { addFavoriteUser, deleteFavoriteUser, increaseViews } = useContext(ListingContext);
 
@@ -35,7 +35,11 @@ const ListingCard = ({ listingId, title, price, currency, location, stars, photo
             stars,
             numberOfRatings,
             location,
-            properties
+            properties,
+            description,
+            price,
+            currency,
+            owner
           }
         });
       }}
@@ -63,13 +67,13 @@ const ListingCard = ({ listingId, title, price, currency, location, stars, photo
               {title}
             </Text>
             <Text style={styles.price}>
-              {price}{currency}
+              {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{currency}
             </Text>
           </View>
           <View style={styles.locationContainer}>
             <Ionicons name='location' size={17} color={constants.MAIN_COLOR} />
             <Text style={styles.location}>
-              {location}
+              {location.address}
             </Text>
           </View>
           <View style={{ alignItems: 'flex-start' }}>
