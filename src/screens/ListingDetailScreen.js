@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
-import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image } from 'react-native';
+import React, { useState, useContext, useRef } from 'react';
+import { StatusBar, StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Avatar } from 'react-native-elements';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { MaterialIcons } from '@expo/vector-icons';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import PropertyList from '../components/PropertyList';
 import { Context as UserContext } from '../context/UserContext';
@@ -16,6 +17,7 @@ const ListingDetailScreen = ({ navigation }) => {
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
   const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
   const { state: { user }, getUserById } = useContext(UserContext);
+  const refRBSheet = useRef();
 
   const toggleNumberOfLines = () => {
     setTextShown(!textShown);
@@ -148,41 +150,17 @@ const ListingDetailScreen = ({ navigation }) => {
                 Total Price
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TouchableOpacity
-                style={styles.contactButton}
-                activeOpacity={0.85}
+            <TouchableOpacity
+              style={styles.contactOwnerButton}
+              activeOpacity={0.85}
+              onPress={() => refRBSheet.current.open()}
+            >
+              <Text
+                style={{ color: 'white' }}
               >
-                <Text
-                  style={{ color: 'white' }}
-                >
-                  Contact Owner
-                </Text>
-              </TouchableOpacity>
-              <View style={styles.ownerInfo}>
-                {
-                  user ?
-                    <Avatar
-                      rounded
-                      size='small'
-                      source={{ uri: user.avatar }}
-                    /> :
-                    <Avatar
-                      rounded
-                      size='small'
-                      source={require('../../assets/user.png')}
-                    />
-                }
-                {
-                  user &&
-                  <Text
-                    style={{ fontSize: 14, color: constants.GREY_COLOR, fontWeight: 'bold' }}
-                  >
-                    {user.firstName} {user.lastName}
-                  </Text>
-                }
-              </View>
-            </View>
+                Contact Owner
+              </Text>
+            </TouchableOpacity>
           </View>
           {/* Map View */}
           <View style={styles.mapContainer}>
@@ -210,7 +188,69 @@ const ListingDetailScreen = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-    </View>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        customStyles={{
+          wrapper: {
+            backgroundColor: 'rgba(0, 0, 0, .6)'
+          },
+          draggableIcon: {
+            backgroundColor: constants.MAIN_COLOR
+          },
+          container: {
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+            paddingHorizontal: 20
+          }
+        }}
+        height={80}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {
+              user ?
+                <Avatar
+                  rounded
+                  size={50}
+                  source={{ uri: user.avatar }}
+                /> :
+                <Avatar
+                  rounded
+                  size={50}
+                  source={require('../../assets/user.png')}
+                />
+            }
+            <View style={{ paddingHorizontal: 10 }}>
+              {
+                user &&
+                <Text
+                  style={{ fontSize: 15, color: 'black', fontWeight: 'bold' }}
+                >
+                  {user.firstName} {user.lastName}
+                </Text>
+              }
+              <Text style={{ fontSize: 11, color: constants.GREY_COLOR, fontWeight: 'bold' }}>Owner</Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={[styles.contactButton, { marginRight: 15 }]}
+            >
+              <AntDesign name='message1' size={24} color='#bcbcbc' />
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.contactButton}
+            >
+              <Ionicons name='call' size={24} color='#bcbcbc' />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </RBSheet>
+    </View >
   );
 };
 
@@ -294,18 +334,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 10
   },
-  contactButton: {
-    height: 46,
+  contactOwnerButton: {
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#000',
     borderRadius: 10,
-    paddingHorizontal: 15
-  },
-  ownerInfo: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginLeft: 10
+    paddingHorizontal: 10
   },
   mapContainer: {
     height: 260,
@@ -317,6 +352,15 @@ const styles = StyleSheet.create({
   map: {
     height: 250,
     width: '97%'
+  },
+  contactButton: {
+    height: 40,
+    width: 40,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#eeeeee',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 
