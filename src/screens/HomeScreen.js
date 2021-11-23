@@ -67,11 +67,11 @@ const HomeScreen = ({ navigation }) => {
                 price={popularListing.price.value}
                 currency={popularListing.price.currency === 'VNĐ' ? 'VNĐ' : '$'}
                 location={popularListing.location}
-                stars={countAverageStars(popularListing.stars)}
+                stars={countAverageStars(popularListing.ratings.map(rating => rating.stars))}
                 photos={popularListing.photos}
                 navigation={navigation}
                 isFavoriteByUser={checkFavorite(popularListing)}
-                numberOfRatings={popularListing.stars.length}
+                numberOfRatings={popularListing.ratings.length}
                 properties={popularListing.category}
                 description={popularListing.description}
                 owner={popularListing.owner}

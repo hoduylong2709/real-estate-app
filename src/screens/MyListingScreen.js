@@ -22,7 +22,7 @@ const MyListingScreen = () => {
                 title={listing.title}
                 location={listing.location.address}
                 description={listing.description}
-                stars={countAverageStars(listing.stars)}
+                stars={countAverageStars(listing.ratings.map(rating => rating.stars))}
                 photos={listing.photos}
               />
             )

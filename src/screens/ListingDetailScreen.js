@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from 'react';
-import { StatusBar, StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image } from 'react-native';
+import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Avatar } from 'react-native-elements';
 import MapView, { Marker, Callout } from 'react-native-maps';
