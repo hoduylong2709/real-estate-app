@@ -8,7 +8,6 @@ import { Context as ListingContext } from '../context/ListingContext';
 import Spacer from './../components/Spacer';
 import CategoryCard from '../components/CategoryCard';
 import ListingCard from '../components/ListingCard';
-import { countAverageStars } from '../utils/countAverageStars';
 
 const HomeScreen = ({ navigation }) => {
   const { fetchCategories, state: { categories, categoryLoading } } = useContext(CategoryContext);
@@ -67,14 +66,13 @@ const HomeScreen = ({ navigation }) => {
                 price={popularListing.price.value}
                 currency={popularListing.price.currency === 'VNĐ' ? 'VNĐ' : '$'}
                 location={popularListing.location}
-                stars={countAverageStars(popularListing.ratings.map(rating => rating.stars))}
                 photos={popularListing.photos}
                 navigation={navigation}
                 isFavoriteByUser={checkFavorite(popularListing)}
-                numberOfRatings={popularListing.ratings.length}
                 properties={popularListing.category}
                 description={popularListing.description}
                 owner={popularListing.owner}
+                ratings={popularListing.ratings}
               />
             )
           )}

@@ -4,11 +4,13 @@ import { Rating } from 'react-native-ratings';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import { Context as ListingContext } from '../context/ListingContext';
+import { countAverageStars } from '../utils/countAverageStars';
 const { width } = Dimensions.get('screen');
 
-const ListingCard = ({ listingId, title, price, currency, location, stars, photos, navigation, isFavoriteByUser, numberOfRatings, properties, description, owner }) => {
+const ListingCard = ({ listingId, title, price, currency, location, photos, navigation, isFavoriteByUser, properties, description, owner, ratings }) => {
   const [favoriteListing, setFavoriteListing] = useState(isFavoriteByUser);
   const { addFavoriteUser, deleteFavoriteUser, increaseViews } = useContext(ListingContext);
+  const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
   const pressIcon = () => {
     if (favoriteListing) {
@@ -32,14 +34,13 @@ const ListingCard = ({ listingId, title, price, currency, location, stars, photo
             isFavorite: favoriteListing,
             pressIcon,
             title,
-            stars,
-            numberOfRatings,
             location,
             properties,
             description,
             price,
             currency,
-            owner
+            owner,
+            ratings
           }
         });
       }}
@@ -81,7 +82,7 @@ const ListingCard = ({ listingId, title, price, currency, location, stars, photo
               ratingCount={5}
               imageSize={17}
               style={{ marginTop: 5 }}
-              startingValue={stars}
+              startingValue={averageStars}
               readonly
             />
           </View>

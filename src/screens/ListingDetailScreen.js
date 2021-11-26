@@ -8,16 +8,19 @@ import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import PropertyList from '../components/PropertyList';
 import { Context as UserContext } from '../context/UserContext';
+import { countAverageStars } from '../utils/countAverageStars';
+import RatingCard from '../components/RatingCard';
 const { width } = Dimensions.get('screen');
 
 const ListingDetailScreen = ({ navigation }) => {
-  const { owner, photos, isFavorite, pressIcon, title, stars, numberOfRatings, location, properties, description, price, currency } = navigation.getParam('listingProperties');
+  const { owner, photos, isFavorite, pressIcon, title, location, properties, description, price, currency, ratings } = navigation.getParam('listingProperties');
   const [favoriteListing, setFavoriteListing] = useState(isFavorite);
   const [textShown, setTextShown] = useState(false); // To show the remaining text
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
   const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
   const { state: { user }, getUserById } = useContext(UserContext);
   const refRBSheet = useRef();
+  const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
   const toggleNumberOfLines = () => {
     setTextShown(!textShown);
@@ -87,9 +90,9 @@ const ListingDetailScreen = ({ navigation }) => {
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{title}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <View style={styles.ratingTag}>
-                <Text style={{ color: 'white', fontWeight: 'bold' }}>{stars.toString()}.0</Text>
+                <Text style={{ color: 'white', fontWeight: 'bold' }}>{averageStars.toString()}.0</Text>
               </View>
-              <Text style={{ fontSize: 13, marginLeft: 5, fontWeight: 'bold' }}>{numberOfRatings.toString()} ratings</Text>
+              <Text style={{ fontSize: 13, marginLeft: 5, fontWeight: 'bold' }}>{ratings.length.toString()} ratings</Text>
             </View>
           </View>
           {/* Location text */}
@@ -119,7 +122,7 @@ const ListingDetailScreen = ({ navigation }) => {
           </View>
           {/* Listing photos */}
           <FlatList
-            contentContainerStyle={{ marginTop: 10 }}
+            contentContainerStyle={{ marginTop: 15 }}
             horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={item => item._id}
@@ -186,6 +189,27 @@ const ListingDetailScreen = ({ navigation }) => {
               </Marker>
             </MapView>
           </View>
+          {/* Rating Container */}
+          <View style={{ marginTop: 15, marginBottom: 15 }}>
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={item => item._id}
+              data={ratings}
+              renderItem={({ item }) =>
+                <RatingCard
+                  rating={item}
+                />
+              }
+            />
+            <TouchableOpacity
+              style={styles.reviewAdding}
+              activeOpacity={0.7}
+            >
+              <AntDesign name='plus' size={18} color={constants.MAIN_COLOR} />
+              <Text>Post your review now</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
       <RBSheet
@@ -194,7 +218,7 @@ const ListingDetailScreen = ({ navigation }) => {
         closeOnPressMask={true}
         customStyles={{
           wrapper: {
-            backgroundColor: 'rgba(0, 0, 0, .6)'
+            backgroundColor: 'transparent'
           },
           draggableIcon: {
             backgroundColor: constants.MAIN_COLOR
@@ -332,7 +356,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 10
+    marginVertical: 15
   },
   contactOwnerButton: {
     height: 50,
@@ -361,6 +385,16 @@ const styles = StyleSheet.create({
     borderColor: '#eeeeee',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  reviewAdding: {
+    flexDirection: 'row',
+    marginTop: 15,
+    borderWidth: 2,
+    borderRadius: 15,
+    alignItems: 'center',
+    padding: 5,
+    borderColor: constants.MAIN_COLOR,
+    alignSelf: 'flex-start'
   }
 });
 
