@@ -40,7 +40,7 @@ const ListingCard = ({ listingId, title, price, currency, location, photos, navi
             price,
             currency,
             owner,
-            ratings
+            listingId
           }
         });
       }}

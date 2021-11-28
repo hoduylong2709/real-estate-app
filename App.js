@@ -24,6 +24,7 @@ import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
 import ListingFiltersScreen from './src/screens/ListingFiltersScreen';
 import MyListingScreen from './src/screens/MyListingScreen';
 import ListingDetailScreen from './src/screens/ListingDetailScreen';
+import RatingScreen from './src/screens/RatingScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -36,7 +37,8 @@ const homeFlow = createStackNavigator({
   Home: HomeScreen,
   AddListing: AddListingScreen,
   ListingFilters: ListingFiltersScreen,
-  ListingDetail: ListingDetailScreen
+  ListingDetail: ListingDetailScreen,
+  Rating: RatingScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
@@ -47,7 +49,7 @@ homeFlow.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName === 'AddListing' || routeName === 'ListingFilters' || routeName === 'ListingDetail') {
+  if (routeName === 'AddListing' || routeName === 'ListingFilters' || routeName === 'ListingDetail' || routeName === 'Rating') {
     tabBarVisible = false;
   }
 

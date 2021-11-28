@@ -8,17 +8,19 @@ import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import PropertyList from '../components/PropertyList';
 import { Context as UserContext } from '../context/UserContext';
+import { Context as ListingContext } from '../context/ListingContext';
 import { countAverageStars } from '../utils/countAverageStars';
 import RatingCard from '../components/RatingCard';
 const { width } = Dimensions.get('screen');
 
 const ListingDetailScreen = ({ navigation }) => {
-  const { owner, photos, isFavorite, pressIcon, title, location, properties, description, price, currency, ratings } = navigation.getParam('listingProperties');
+  const { listingId, owner, photos, isFavorite, pressIcon, title, location, properties, description, price, currency } = navigation.getParam('listingProperties');
   const [favoriteListing, setFavoriteListing] = useState(isFavorite);
   const [textShown, setTextShown] = useState(false); // To show the remaining text
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
   const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
   const { state: { user }, getUserById } = useContext(UserContext);
+  const { state: { ratings }, fetchRatings } = useContext(ListingContext);
   const refRBSheet = useRef();
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
@@ -32,7 +34,10 @@ const ListingDetailScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <NavigationEvents onWillFocus={() => getUserById(owner)} />
+      <NavigationEvents onWillFocus={() => {
+        getUserById(owner);
+        fetchRatings(listingId);
+      }} />
       <ScrollView showsVerticalScrollIndicator={true}>
         {/* House image */}
         <View style={styles.backgroundImageContainer}>
@@ -191,20 +196,23 @@ const ListingDetailScreen = ({ navigation }) => {
           </View>
           {/* Rating Container */}
           <View style={{ marginTop: 15, marginBottom: 15 }}>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={item => item._id}
-              data={ratings}
-              renderItem={({ item }) =>
-                <RatingCard
-                  rating={item}
-                />
-              }
-            />
+            {ratings &&
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={item => item._id}
+                data={ratings}
+                renderItem={({ item }) =>
+                  <RatingCard
+                    rating={item}
+                  />
+                }
+              />
+            }
             <TouchableOpacity
               style={styles.reviewAdding}
               activeOpacity={0.7}
+              onPress={() => navigation.navigate('Rating', { id: listingId })}
             >
               <AntDesign name='plus' size={18} color={constants.MAIN_COLOR} />
               <Text>Post your review now</Text>
@@ -295,7 +303,7 @@ const styles = StyleSheet.create({
   backgroundImageContainer: {
     elevation: 20,
     marginHorizontal: 20,
-    marginTop: 20,
+    marginTop: 40,
     alignItems: 'center',
     height: 350
   },
