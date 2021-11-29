@@ -84,8 +84,9 @@ const verify = dispatch => async (id, verifyCode) => {
     dispatch({ type: 'auth_start' });
     const response = await realEstateApi.post(`/users/verify/${id}`, { verifyCode });
     await AsyncStorage.setItem('token', response.data.token);
+    await AsyncStorage.setItem('userInfo', JSON.stringify(response.data.user));
     dispatch({ type: 'login', payload: response.data.token });
-    navigate('Home');
+    navigate('Home', { userId: response.data.user._id });
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'The verify code is incorrect!' });
   }
@@ -95,6 +96,7 @@ const logout = dispatch => async () => {
   try {
     await realEstateApi.post('users/logout');
     await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('userInfo');
     dispatch({ type: 'logout' });
     navigate('loginFlow');
   } catch (error) {

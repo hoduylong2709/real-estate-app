@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from 'react';
-import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image } from 'react-native';
+import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image, ToastAndroid } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Avatar } from 'react-native-elements';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -14,7 +14,7 @@ import RatingCard from '../components/RatingCard';
 const { width } = Dimensions.get('screen');
 
 const ListingDetailScreen = ({ navigation }) => {
-  const { listingId, owner, photos, isFavorite, pressIcon, title, location, properties, description, price, currency } = navigation.getParam('listingProperties');
+  const { listingId, owner, photos, isFavorite, pressIcon, title, location, properties, description, price, currency, userId } = navigation.getParam('listingProperties');
   const [favoriteListing, setFavoriteListing] = useState(isFavorite);
   const [textShown, setTextShown] = useState(false); // To show the remaining text
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
@@ -30,6 +30,22 @@ const ListingDetailScreen = ({ navigation }) => {
 
   const onTextLayout = e => {
     setLengthMore(e.nativeEvent.lines.length > 2);
+  };
+
+  const showToast = () => {
+    ToastAndroid.show('Sorry, you can only rate one time!', ToastAndroid.SHORT);
+  };
+
+  const checkExistenceOfYourRating = ratings => {
+    let isExist = false;
+
+    ratings.forEach(rating => {
+      if (rating.owner.id === userId) {
+        isExist = true;
+      }
+    });
+
+    return isExist;
   };
 
   return (
@@ -205,6 +221,7 @@ const ListingDetailScreen = ({ navigation }) => {
                 renderItem={({ item }) =>
                   <RatingCard
                     rating={item}
+                    isUser={userId === item.owner.id}
                   />
                 }
               />
@@ -212,7 +229,17 @@ const ListingDetailScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.reviewAdding}
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('Rating', { id: listingId })}
+              onPress={() => {
+                if (ratings) {
+                  if (checkExistenceOfYourRating(ratings)) {
+                    showToast();
+                  } else {
+                    navigation.navigate('Rating', { id: listingId });
+                  }
+                } else {
+                  navigation.navigate('Rating', { id: listingId });
+                }
+              }}
             >
               <AntDesign name='plus' size={18} color={constants.MAIN_COLOR} />
               <Text>Post your review now</Text>

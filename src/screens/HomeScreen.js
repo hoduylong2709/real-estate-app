@@ -73,6 +73,7 @@ const HomeScreen = ({ navigation }) => {
                 description={popularListing.description}
                 owner={popularListing.owner}
                 ratings={popularListing.ratings}
+                userId={userId}
               />
             )
           )}

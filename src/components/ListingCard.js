@@ -7,7 +7,21 @@ import { Context as ListingContext } from '../context/ListingContext';
 import { countAverageStars } from '../utils/countAverageStars';
 const { width } = Dimensions.get('screen');
 
-const ListingCard = ({ listingId, title, price, currency, location, photos, navigation, isFavoriteByUser, properties, description, owner, ratings }) => {
+const ListingCard = ({
+  listingId,
+  title,
+  price,
+  currency,
+  location,
+  photos,
+  navigation,
+  isFavoriteByUser,
+  properties,
+  description,
+  owner,
+  ratings,
+  userId
+}) => {
   const [favoriteListing, setFavoriteListing] = useState(isFavoriteByUser);
   const { addFavoriteUser, deleteFavoriteUser, increaseViews } = useContext(ListingContext);
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
@@ -40,7 +54,8 @@ const ListingCard = ({ listingId, title, price, currency, location, photos, navi
             price,
             currency,
             owner,
-            listingId
+            listingId,
+            userId
           }
         });
       }}
