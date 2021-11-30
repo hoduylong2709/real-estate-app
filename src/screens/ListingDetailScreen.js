@@ -137,7 +137,7 @@ const ListingDetailScreen = ({ navigation }) => {
                 <Text
                   onPress={toggleNumberOfLines}
                   style={{ color: '#A9A9A9', textDecorationLine: 'underline', textDecorationColor: '#f3f6f4' }}
-                >{textShown ? null : 'See more'}</Text> :
+                >{textShown ? 'See less' : 'See more'}</Text> :
                 null
             }
           </View>
@@ -210,40 +210,33 @@ const ListingDetailScreen = ({ navigation }) => {
               </Marker>
             </MapView>
           </View>
-          {/* Rating Container */}
+          {/* Rating and review Container */}
           <View style={{ marginTop: 15, marginBottom: 15 }}>
-            {ratings &&
-              <FlatList
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={item => item._id}
-                data={ratings}
-                renderItem={({ item }) =>
-                  <RatingCard
-                    rating={item}
-                    isUser={userId === item.owner.id}
-                  />
-                }
-              />
-            }
-            <TouchableOpacity
-              style={styles.reviewAdding}
-              activeOpacity={0.7}
-              onPress={() => {
-                if (ratings) {
-                  if (checkExistenceOfYourRating(ratings)) {
-                    showToast();
+            <View style={{ flexDirection: 'row', marginBottom: 15, justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Ratings and reviews</Text>
+              <TouchableOpacity
+                style={styles.reviewAdding}
+                activeOpacity={0.7}
+                onPress={() => {
+                  if (ratings) {
+                    if (checkExistenceOfYourRating(ratings)) {
+                      showToast();
+                    } else {
+                      navigation.navigate('Rating', { id: listingId });
+                    }
                   } else {
                     navigation.navigate('Rating', { id: listingId });
                   }
-                } else {
-                  navigation.navigate('Rating', { id: listingId });
-                }
-              }}
-            >
-              <AntDesign name='plus' size={18} color={constants.MAIN_COLOR} />
-              <Text>Post your review now</Text>
-            </TouchableOpacity>
+                }}
+              >
+                <AntDesign name='plus' size={14} color={constants.MAIN_COLOR} />
+                <Text style={{ fontSize: 12 }}>Rating & review</Text>
+              </TouchableOpacity>
+            </View>
+            {ratings &&
+              ratings.map(rating => <RatingCard key={rating._id} rating={rating} isCurrentUser={userId === rating.owner.id} />)
+            }
+
           </View>
         </View>
       </ScrollView>
@@ -423,11 +416,10 @@ const styles = StyleSheet.create({
   },
   reviewAdding: {
     flexDirection: 'row',
-    marginTop: 15,
     borderWidth: 2,
     borderRadius: 15,
     alignItems: 'center',
-    padding: 5,
+    padding: 3,
     borderColor: constants.MAIN_COLOR,
     alignSelf: 'flex-start'
   }
