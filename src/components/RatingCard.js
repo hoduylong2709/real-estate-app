@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import { Rating } from 'react-native-ratings';
+import { AirbnbRating } from 'react-native-ratings';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Context as RatingContext } from '../context/RatingContext';
 import moment from 'moment';
 
-const RatingCard = ({ rating, isCurrentUser }) => {
+const RatingCard = ({ rating, isCurrentUser, listingId, navigation }) => {
   const { stars, review, createdAt, owner } = rating;
   const [textShown, setTextShown] = useState(false); // To show the remaining text
   const [lengthMore, setLengthMore] = useState(false); // To show 'see more' or 'see less'
+  const { deleteRating } = useContext(RatingContext);
 
   const toggleNumberOfLines = () => {
     setTextShown(!textShown);
@@ -18,29 +21,50 @@ const RatingCard = ({ rating, isCurrentUser }) => {
   };
 
   return (
-    <TouchableOpacity
+    <View
       style={styles.ratingContainer}
-      activeOpacity={0.85}
-      disabled={!isCurrentUser}
     >
       <View style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-        <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
           <View style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-            {owner && <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{isCurrentUser ? 'You' : owner.fullname}</Text>}
-            <Text style={{ fontSize: 10, color: '#5b5b5b', fontWeight: 'bold' }}>{moment(createdAt).fromNow()}</Text>
-            <Rating
-              ratingCount={5}
-              imageSize={14}
-              startingValue={stars}
-              tintColor='#fafafa'
-              readonly
+            <View style={{ flexDirection: 'row' }}>
+              {owner &&
+                (owner.avatar ?
+                  <Avatar size='small' source={{ uri: owner.avatar }} rounded /> :
+                  <Avatar size='small' source={require('../../assets/user.png')} rounded />
+                )
+              }
+              <View style={{ flexDirection: 'column', marginLeft: 5 }}>
+                {owner && <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{isCurrentUser ? 'You' : owner.fullname}</Text>}
+                <Text style={{ fontSize: 10, color: '#5b5b5b', fontWeight: 'bold' }}>{moment(createdAt).fromNow()}</Text>
+              </View>
+            </View>
+            <AirbnbRating
+              count={5}
+              defaultRating={stars}
+              showRating={false}
+              size={10}
+              isDisabled={true}
             />
           </View>
-          {owner &&
-            (owner.avatar ?
-              <Avatar size='small' source={{ uri: owner.avatar }} rounded /> :
-              <Avatar size='small' source={require('../../assets/user.png')} rounded />
-            )
+          {
+            isCurrentUser &&
+            <View style={styles.icons}>
+              <TouchableOpacity
+                style={styles.icon}
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('Rating', { isUpdate: true, rating, listingId })}
+              >
+                <MaterialIcons name='edit' size={15} color='white' />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.icon}
+                activeOpacity={0.7}
+                onPress={() => deleteRating(rating._id, listingId)}
+              >
+                <MaterialIcons name='delete' size={15} color='white' />
+              </TouchableOpacity>
+            </View>
           }
         </View>
         <View style={{ marginTop: 5 }}>
@@ -63,7 +87,7 @@ const RatingCard = ({ rating, isCurrentUser }) => {
           }
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -76,6 +100,18 @@ const styles = StyleSheet.create({
     elevation: 5,
     paddingHorizontal: 15,
     paddingVertical: 10
+  },
+  icons: {
+    flexDirection: 'row',
+    width: 55,
+    justifyContent: 'space-between'
+  },
+  icon: {
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#eeeeee',
+    backgroundColor: '#68b69d',
+    padding: 5
   }
 });
 

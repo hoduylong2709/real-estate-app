@@ -24,14 +24,10 @@ const listingReducer = (state, action) => {
       return { ...state, listings: action.payload, loading: false };
     case 'fetch_popular_listings':
       return { ...state, popularListings: action.payload, loading: false };
-    case 'post_rating':
-      return { ...state, errorMessage: '', loading: false };
-    case 'fetch_ratings':
-      return { ...state, errorMessage: '', ratings: action.payload };
     case 'add_error':
       return { ...state, errorMessage: action.payload, loading: false };
     case 'clear_error_message':
-      return { ...state, errorMessage: '' }
+      return { ...state, errorMessage: '' };
     default:
       return state;
   }
@@ -126,26 +122,6 @@ const increaseViews = dispatch => async id => {
   await realEstateApi.post(`/listings/views/${id}`);
 };
 
-const postRating = dispatch => async (id, stars, review) => {
-  try {
-    dispatch({ type: 'create_start' });
-    await realEstateApi.post(`/listings/rating/${id}`, { stars, review });
-    dispatch({ type: 'post_rating' });
-    navigate('ListingDetail');
-  } catch (error) {
-    dispatch({ type: 'add_error', payload: 'Cannot post your rating. Please try again!' });
-  }
-};
-
-const fetchRatings = dispatch => async id => {
-  try {
-    const response = await realEstateApi.get(`/listings/ratings/${id}`);
-    dispatch({ type: 'fetch_ratings', payload: response.data });
-  } catch (error) {
-    dispatch({ type: 'add_error', payload: 'Cannot get the ratings. Please try again!' });
-  }
-};
-
 const clearErrorMessage = dispatch => () => {
   dispatch({ type: 'clear_error_message' });
 };
@@ -161,9 +137,7 @@ export const { Provider, Context } = createDataContext(
     deleteImageCloudinary,
     addFavoriteUser,
     deleteFavoriteUser,
-    increaseViews,
-    postRating,
-    fetchRatings
+    increaseViews
   },
-  { errorMessage: '', loading: false, listings: [], popularListings: [], photos: [], ratings: [] }
+  { errorMessage: '', loading: false, listings: [], popularListings: [], photos: [] }
 );

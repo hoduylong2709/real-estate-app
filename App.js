@@ -10,6 +10,7 @@ import { Provider as AuthProvider } from './src/context/AuthContext';
 import { Provider as CategoryProvider } from './src/context/CategoryContext';
 import { Provider as ListingProvider } from './src/context/ListingContext';
 import { Provider as UserProvider } from './src/context/UserContext';
+import { Provider as RatingProvider } from './src/context/RatingContext';
 import OnboardScreen from './src/screens/OnboardScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
@@ -102,16 +103,18 @@ const App = createAppContainer(switchNavigator);
 
 export default () => {
   return (
-    <UserProvider>
-      <ListingProvider>
-        <CategoryProvider>
-          <AuthProvider>
-            <OnboardProvider>
-              <App ref={(navigator) => { setNavigator(navigator) }} />
-            </OnboardProvider>
-          </AuthProvider>
-        </CategoryProvider>
-      </ListingProvider>
-    </UserProvider>
+    <RatingProvider>
+      <UserProvider>
+        <ListingProvider>
+          <CategoryProvider>
+            <AuthProvider>
+              <OnboardProvider>
+                <App ref={(navigator) => { setNavigator(navigator) }} />
+              </OnboardProvider>
+            </AuthProvider>
+          </CategoryProvider>
+        </ListingProvider>
+      </UserProvider>
+    </RatingProvider>
   );
 };

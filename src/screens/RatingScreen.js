@@ -5,14 +5,16 @@ import { AirbnbRating } from 'react-native-ratings';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
-import { Context as ListingContext } from '../context/ListingContext';
+import { Context as RatingContext } from '../context/RatingContext';
 const { width } = Dimensions.get('screen');
 
 const RatingScreen = ({ navigation }) => {
-  const { state: { loading }, postRating } = useContext(ListingContext);
-  const [stars, setStars] = useState(3);
-  const [review, setReview] = useState('');
-  const id = navigation.getParam('id');
+  const { state: { loading }, postRating, updateRating } = useContext(RatingContext);
+  const listingId = navigation.getParam('listingId');
+  const isUpdate = navigation.getParam('isUpdate');
+  const rating = navigation.getParam('rating');
+  const [stars, setStars] = useState(isUpdate && rating && rating.stars || 3);
+  const [review, setReview] = useState(isUpdate && rating && rating.review || '');
 
   return (
     <View style={styles.container}>
@@ -28,7 +30,7 @@ const RatingScreen = ({ navigation }) => {
         <AirbnbRating
           count={5}
           reviews={['Terrible', 'Bad', 'Good', 'Very Good', 'Excellent']}
-          defaultRating={3}
+          defaultRating={stars}
           size={24}
           reviewColor='#5b5b5b'
           starContainerStyle={{ marginTop: 5, justifyContent: 'space-between', width: 200, marginBottom: 30 }}
@@ -47,7 +49,11 @@ const RatingScreen = ({ navigation }) => {
           title='Submit'
           containerStyle={styles.button}
           buttonStyle={{ backgroundColor: constants.MAIN_COLOR }}
-          onPress={() => postRating(id, stars, review)}
+          onPress={() => {
+            isUpdate ?
+              updateRating(rating._id, listingId, stars, review) :
+              postRating(listingId, stars, review)
+          }}
         />
       </View>
       <Spinner

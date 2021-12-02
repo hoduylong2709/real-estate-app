@@ -8,7 +8,7 @@ import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import PropertyList from '../components/PropertyList';
 import { Context as UserContext } from '../context/UserContext';
-import { Context as ListingContext } from '../context/ListingContext';
+import { Context as RatingContext } from '../context/RatingContext';
 import { countAverageStars } from '../utils/countAverageStars';
 import RatingCard from '../components/RatingCard';
 const { width } = Dimensions.get('screen');
@@ -20,7 +20,7 @@ const ListingDetailScreen = ({ navigation }) => {
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
   const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
   const { state: { user }, getUserById } = useContext(UserContext);
-  const { state: { ratings }, fetchRatings } = useContext(ListingContext);
+  const { state: { ratings }, fetchRatings } = useContext(RatingContext);
   const refRBSheet = useRef();
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
@@ -222,10 +222,10 @@ const ListingDetailScreen = ({ navigation }) => {
                     if (checkExistenceOfYourRating(ratings)) {
                       showToast();
                     } else {
-                      navigation.navigate('Rating', { id: listingId });
+                      navigation.navigate('Rating', { listingId, isUpdate: false });
                     }
                   } else {
-                    navigation.navigate('Rating', { id: listingId });
+                    navigation.navigate('Rating', { listingId, isUpdate: false });
                   }
                 }}
               >
@@ -234,7 +234,15 @@ const ListingDetailScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             {ratings &&
-              ratings.map(rating => <RatingCard key={rating._id} rating={rating} isCurrentUser={userId === rating.owner.id} />)
+              ratings.map(
+                rating => <RatingCard
+                  key={rating._id}
+                  rating={rating}
+                  isCurrentUser={userId === rating.owner.id}
+                  listingId={listingId}
+                  navigation={navigation}
+                />
+              )
             }
 
           </View>
