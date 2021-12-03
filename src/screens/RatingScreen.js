@@ -51,8 +51,8 @@ const RatingScreen = ({ navigation }) => {
           buttonStyle={{ backgroundColor: constants.MAIN_COLOR }}
           onPress={() => {
             isUpdate ?
-              updateRating(rating._id, listingId, stars, review) :
-              postRating(listingId, stars, review)
+              updateRating(rating._id, stars, review) :
+              postRating(stars, review, listingId)
           }}
         />
       </View>

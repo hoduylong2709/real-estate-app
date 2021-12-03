@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image } from 'react-native';
-import { Rating } from 'react-native-ratings';
+import { AirbnbRating } from 'react-native-ratings';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import { Context as ListingContext } from '../context/ListingContext';
@@ -93,12 +93,12 @@ const ListingCard = ({
             </Text>
           </View>
           <View style={{ alignItems: 'flex-start' }}>
-            <Rating
-              ratingCount={5}
-              imageSize={17}
-              style={{ marginTop: 5 }}
-              startingValue={averageStars}
-              readonly
+            <AirbnbRating
+              count={5}
+              size={17}
+              defaultRating={averageStars}
+              isDisabled={true}
+              showRating={false}
             />
           </View>
         </View>
@@ -110,7 +110,7 @@ const ListingCard = ({
 const styles = StyleSheet.create({
   card: {
     height: 240,
-    backgroundColor: 'white',
+    backgroundColor: '#fafafa',
     elevation: 10,
     width: width - 30,
     padding: 13,

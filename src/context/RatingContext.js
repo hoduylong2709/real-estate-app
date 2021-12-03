@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import createDataContext from './createDataContext';
 import realEstateApi from '../api/realEstate';
 import { navigate } from '../navigationRef';
@@ -27,10 +26,10 @@ const ratingReducer = (state, action) => {
   }
 };
 
-const postRating = dispatch => async (id, stars, review) => {
+const postRating = dispatch => async (stars, review, listingId) => {
   try {
     dispatch({ type: 'process_start' });
-    await realEstateApi.post(`/listings/rating/${id}`, { stars, review });
+    await realEstateApi.post('/ratings', { stars, review, listingId });
     dispatch({ type: 'post_rating' });
     navigate('ListingDetail');
   } catch (error) {
@@ -38,38 +37,28 @@ const postRating = dispatch => async (id, stars, review) => {
   }
 };
 
-const fetchRatings = dispatch => async id => {
+const fetchRatings = dispatch => async listingId => {
   try {
-    const response = await realEstateApi.get(`/listings/ratings/${id}`);
+    const response = await realEstateApi.get(`/ratings/listings/${listingId}`);
     dispatch({ type: 'fetch_ratings', payload: response.data });
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'Cannot get the ratings. Please try again!' });
   }
 };
 
-const deleteRating = dispatch => async (ratingId, listingId) => {
-  const token = await AsyncStorage.getItem('token');
-
+const deleteRating = dispatch => async ratingId => {
   try {
-    dispatch({ type: 'process_start' });
-    await realEstateApi.delete(`/listings/ratings/${ratingId}`, {
-      headers: {
-        Authorization: token
-      },
-      data: {
-        listingId
-      }
-    });
+    await realEstateApi.delete(`/ratings/${ratingId}`);
     dispatch({ type: 'delete_rating', payload: ratingId });
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'Cannot delete the rating. Please try again!' });
   }
 };
 
-const updateRating = dispatch => async (ratingId, listingId, stars, review) => {
+const updateRating = dispatch => async (ratingId, stars, review) => {
   try {
     dispatch({ type: 'process_start' });
-    await realEstateApi.patch(`/listings/ratings/${ratingId}`, { stars, review, listingId });
+    await realEstateApi.patch(`/ratings/${ratingId}`, { stars, review });
     dispatch({ type: 'post_rating' });
     navigate('ListingDetail');
   } catch (error) {

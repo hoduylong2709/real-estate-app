@@ -40,7 +40,7 @@ const ListingDetailScreen = ({ navigation }) => {
     let isExist = false;
 
     ratings.forEach(rating => {
-      if (rating.owner.id === userId) {
+      if (rating.owner._id === userId) {
         isExist = true;
       }
     });
@@ -238,7 +238,7 @@ const ListingDetailScreen = ({ navigation }) => {
                 rating => <RatingCard
                   key={rating._id}
                   rating={rating}
-                  isCurrentUser={userId === rating.owner.id}
+                  isCurrentUser={userId === rating.owner._id}
                   listingId={listingId}
                   navigation={navigation}
                 />

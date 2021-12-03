@@ -7,7 +7,7 @@ import { Context as RatingContext } from '../context/RatingContext';
 import moment from 'moment';
 
 const RatingCard = ({ rating, isCurrentUser, listingId, navigation }) => {
-  const { stars, review, createdAt, owner } = rating;
+  const { stars, review, createdAt, owner, _id } = rating;
   const [textShown, setTextShown] = useState(false); // To show the remaining text
   const [lengthMore, setLengthMore] = useState(false); // To show 'see more' or 'see less'
   const { deleteRating } = useContext(RatingContext);
@@ -35,7 +35,7 @@ const RatingCard = ({ rating, isCurrentUser, listingId, navigation }) => {
                 )
               }
               <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                {owner && <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{isCurrentUser ? 'You' : owner.fullname}</Text>}
+                {owner && <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{isCurrentUser ? 'You' : `${owner.firstName} ${owner.lastName}`}</Text>}
                 <Text style={{ fontSize: 10, color: '#5b5b5b', fontWeight: 'bold' }}>{moment(createdAt).fromNow()}</Text>
               </View>
             </View>
@@ -53,14 +53,14 @@ const RatingCard = ({ rating, isCurrentUser, listingId, navigation }) => {
               <TouchableOpacity
                 style={styles.icon}
                 activeOpacity={0.7}
-                onPress={() => navigation.navigate('Rating', { isUpdate: true, rating, listingId })}
+                onPress={() => navigation.navigate('Rating', { isUpdate: true, rating })}
               >
                 <MaterialIcons name='edit' size={15} color='white' />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.icon}
                 activeOpacity={0.7}
-                onPress={() => deleteRating(rating._id, listingId)}
+                onPress={() => deleteRating(_id)}
               >
                 <MaterialIcons name='delete' size={15} color='white' />
               </TouchableOpacity>
