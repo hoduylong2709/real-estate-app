@@ -63,7 +63,9 @@ homeFlow.navigationOptions = ({ navigation }) => {
 
 const profileFlow = createStackNavigator({
   Profile: ProfileScreen,
-  MyListing: MyListingScreen
+  MyListing: MyListingScreen,
+  ListingDetail: ListingDetailScreen,
+  Rating: RatingScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'

@@ -100,7 +100,7 @@ const createListing = dispatch => async (
 
 const fetchListings = dispatch => async () => {
   dispatch({ type: 'start_fetching' });
-  const response = await realEstateApi.get('/listings');
+  const response = await realEstateApi.get('/listings/me');
   dispatch({ type: 'fetch_listings', payload: response.data });
 };
 

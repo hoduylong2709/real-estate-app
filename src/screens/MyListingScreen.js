@@ -1,29 +1,45 @@
 import React, { useContext } from 'react';
-import { StyleSheet, View, ScrollView, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ScrollView, ActivityIndicator, Text } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import { FontAwesome } from '@expo/vector-icons';
 import * as constants from '../constants';
-import MyListingCard from '../components/MyListingCard';
+import ListingCard from '../components/ListingCard';
 import { Context as ListingContext } from '../context/ListingContext';
-import { countAverageStars } from '../utils/countAverageStars';
 
-const MyListingScreen = () => {
+const MyListingScreen = ({ navigation }) => {
   const { state: { listings, loading }, fetchListings } = useContext(ListingContext);
 
   return (
     <View style={styles.container}>
       <NavigationEvents onWillFocus={fetchListings} />
       {loading && <ActivityIndicator size='small' color='grey' />}
+      {
+        !loading &&
+        listings.length === 0 &&
+        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          <FontAwesome name='list-ul' size={20} color='grey' />
+          <Text style={{ fontSize: 14, color: 'grey', fontWeight: 'bold' }}>No listing found</Text>
+        </View>
+      }
       <ScrollView>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginTop: 5 }}>
           {listings && listings.map(
             listing => (
-              <MyListingCard
+              <ListingCard
                 key={listing._id}
+                listingId={listing._id}
                 title={listing.title}
-                location={listing.location.address}
-                description={listing.description}
-                stars={countAverageStars(listing.ratings.map(rating => rating.stars))}
+                price={listing.price.value}
+                currency={listing.price.currency === 'VNĐ' ? 'VNĐ' : '$'}
+                location={listing.location}
                 photos={listing.photos}
+                navigation={navigation}
+                isFavoriteByUser={false}
+                properties={listing.category}
+                description={listing.description}
+                owner={listing.owner}
+                ratings={listing.ratings}
+                userId={listing.owner}
               />
             )
           )}

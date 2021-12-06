@@ -189,7 +189,9 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     width: Dimensions.get('window').width * 0.85,
-    marginTop: 20
+    marginTop: 20,
+    backgroundColor: constants.MAIN_COLOR,
+    borderRadius: 20
   },
   avatarContainer: {
     alignItems: 'center'

@@ -78,7 +78,7 @@ const ListingDetailScreen = ({ navigation }) => {
                   setFavoriteListing(!favoriteListing);
                 }}
               >
-                <View style={styles.headerBtn}>
+                {userId !== owner && <View style={styles.headerBtn}>
                   {
                     favoriteListing ?
                       <MaterialIcons
@@ -92,7 +92,7 @@ const ListingDetailScreen = ({ navigation }) => {
                         color='black'
                       />
                   }
-                </View>
+                </View>}
               </TouchableOpacity>
             </View>
           </ImageBackground>
@@ -178,6 +178,7 @@ const ListingDetailScreen = ({ navigation }) => {
               style={styles.contactOwnerButton}
               activeOpacity={0.85}
               onPress={() => refRBSheet.current.open()}
+              disabled={userId === owner}
             >
               <Text
                 style={{ color: 'white' }}
@@ -353,7 +354,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#eeeeee',
   },
   virtualTag: {
     top: -20,

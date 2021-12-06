@@ -41,7 +41,9 @@ const ListingCard = ({
       style={{ marginLeft: 15, marginRight: 15, marginTop: 3, marginBottom: 20 }}
       activeOpacity={0.9}
       onPress={() => {
-        increaseViews(listingId);
+        if (userId !== owner) {
+          increaseViews(listingId);
+        }
         navigation.navigate('ListingDetail', {
           listingProperties: {
             photos,
@@ -61,17 +63,42 @@ const ListingCard = ({
       }}
     >
       <View style={styles.card}>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={{ position: 'absolute', top: 20, right: 30, zIndex: 1 }}
-          onPress={pressIcon}
-        >
-          <MaterialIcons
-            name='favorite'
-            size={28}
-            color={favoriteListing ? '#ea9999' : 'white'}
-          />
-        </TouchableOpacity>
+        {
+          userId === owner ?
+            <View style={{ position: 'absolute', zIndex: 1, top: 20, right: 30 }}>
+              <TouchableOpacity
+                style={styles.icon}
+                activeOpacity={0.7}
+              >
+                <MaterialIcons name='edit' size={15} color='grey' />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.icon, { marginTop: 5 }]}
+                activeOpacity={0.7}
+              >
+                <MaterialIcons name='delete' size={15} color='grey' />
+              </TouchableOpacity>
+            </View> :
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={[styles.icon, { position: 'absolute', top: 20, right: 30, zIndex: 1 }]}
+              onPress={pressIcon}
+            >
+              {
+                favoriteListing ?
+                  <MaterialIcons
+                    name='favorite'
+                    size={20}
+                    color='#ea9999'
+                  /> :
+                  <MaterialIcons
+                    name='favorite-outline'
+                    size={20}
+                    color='black'
+                  />
+              }
+            </TouchableOpacity>
+        }
         <Image
           source={{ uri: photos[0].imageUrl }}
           style={styles.cardImage}
@@ -142,6 +169,13 @@ const styles = StyleSheet.create({
   location: {
     color: 'grey',
     fontSize: 14
+  },
+  icon: {
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#eeeeee',
+    backgroundColor: 'white',
+    padding: 5
   }
 });
 
