@@ -26,6 +26,7 @@ import ListingFiltersScreen from './src/screens/ListingFiltersScreen';
 import MyListingScreen from './src/screens/MyListingScreen';
 import ListingDetailScreen from './src/screens/ListingDetailScreen';
 import RatingScreen from './src/screens/RatingScreen';
+import CameraScreen from './src/screens/CameraScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -37,6 +38,7 @@ const loginFlow = createStackNavigator({
 const homeFlow = createStackNavigator({
   Home: HomeScreen,
   AddListing: AddListingScreen,
+  Camera: CameraScreen,
   ListingFilters: ListingFiltersScreen,
   ListingDetail: ListingDetailScreen,
   Rating: RatingScreen
@@ -50,7 +52,11 @@ homeFlow.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName === 'AddListing' || routeName === 'ListingFilters' || routeName === 'ListingDetail' || routeName === 'Rating') {
+  if (routeName === 'AddListing' ||
+    routeName === 'ListingFilters' ||
+    routeName === 'ListingDetail' ||
+    routeName === 'Rating' ||
+    routeName === 'Camera') {
     tabBarVisible = false;
   }
 

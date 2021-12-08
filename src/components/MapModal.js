@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { Button } from 'react-native-elements';
 import MapView, { Marker, Callout } from 'react-native-maps';
