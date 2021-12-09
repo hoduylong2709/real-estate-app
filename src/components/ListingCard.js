@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { AirbnbRating } from 'react-native-ratings';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import { Context as ListingContext } from '../context/ListingContext';
@@ -23,7 +24,8 @@ const ListingCard = ({
   userId
 }) => {
   const [favoriteListing, setFavoriteListing] = useState(isFavoriteByUser);
-  const { addFavoriteUser, deleteFavoriteUser, increaseViews } = useContext(ListingContext);
+  const [isConfirmationModalVisible, setConfirmationModalVisible] = useState(false);
+  const { addFavoriteUser, deleteFavoriteUser, increaseViews, deleteListing } = useContext(ListingContext);
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
   const pressIcon = () => {
@@ -75,6 +77,7 @@ const ListingCard = ({
               <TouchableOpacity
                 style={[styles.icon, { marginTop: 5 }]}
                 activeOpacity={0.7}
+                onPress={() => setConfirmationModalVisible(true)}
               >
                 <MaterialIcons name='delete' size={15} color='grey' />
               </TouchableOpacity>
@@ -130,6 +133,22 @@ const ListingCard = ({
           </View>
         </View>
       </View>
+      <AwesomeAlert
+        show={isConfirmationModalVisible}
+        title='Confirmation'
+        message='Do you want to delete this listing?'
+        closeOnTouchOutside={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        cancelText='No, cancel'
+        confirmText='Yes, delete it'
+        confirmButtonColor='#DD6B55'
+        onCancelPressed={() => setConfirmationModalVisible(false)}
+        onConfirmPressed={() => {
+          setConfirmationModalVisible(false);
+          deleteListing(listingId);
+        }}
+      />
     </TouchableOpacity>
   );
 };

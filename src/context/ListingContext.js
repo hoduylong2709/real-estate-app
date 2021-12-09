@@ -17,13 +17,20 @@ const listingReducer = (state, action) => {
         photos: state.photos.filter(photo => photo.publicId !== action.payload)
       };
     case 'create_listing':
-      return { ...state, errorMessage: '', loading: false };
+      return { ...state, errorMessage: '', loading: false, photos: [] };
     case 'start_fetching':
       return { ...state, loading: true };
     case 'fetch_listings':
       return { ...state, listings: action.payload, loading: false };
     case 'fetch_popular_listings':
       return { ...state, popularListings: action.payload, loading: false };
+    case 'delete_listing':
+      return {
+        ...state,
+        errorMessage: '',
+        loading: false,
+        listings: state.listings.filter(listing => listing._id !== action.payload)
+      };
     case 'add_error':
       return { ...state, errorMessage: action.payload, loading: false };
     case 'clear_error_message':
@@ -122,6 +129,15 @@ const increaseViews = dispatch => async id => {
   await realEstateApi.post(`/listings/views/${id}`);
 };
 
+const deleteListing = dispatch => async listingId => {
+  try {
+    await realEstateApi.delete(`/listings/${listingId}`);
+    dispatch({ type: 'delete_listing', payload: listingId });
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Cannot delete the listing. Please try again!' });
+  }
+};
+
 const clearErrorMessage = dispatch => () => {
   dispatch({ type: 'clear_error_message' });
 };
@@ -137,7 +153,8 @@ export const { Provider, Context } = createDataContext(
     deleteImageCloudinary,
     addFavoriteUser,
     deleteFavoriteUser,
-    increaseViews
+    increaseViews,
+    deleteListing
   },
   { errorMessage: '', loading: false, listings: [], popularListings: [], photos: [] }
 );

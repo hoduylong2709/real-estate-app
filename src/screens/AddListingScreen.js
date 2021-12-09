@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import * as constants from '../constants';
 import ListingForm from '../components/ListingForm';
 
 const AddListingScreen = () => {
@@ -13,14 +12,14 @@ const AddListingScreen = () => {
 
 AddListingScreen.navigationOptions = () => {
   return {
-    headerTintColor: constants.MAIN_COLOR,
     headerTitleStyle: {
       color: 'black'
     },
     headerStyle: {
       elevation: 0
     },
-    title: 'Add Listing'
+    title: 'Add Listing',
+    headerLeft: () => null
   };
 };
 

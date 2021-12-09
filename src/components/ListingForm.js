@@ -5,11 +5,11 @@ import CurrencyInput from 'react-native-currency-input';
 import ModalSelector from 'react-native-modal-selector';
 import { withNavigation } from 'react-navigation';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import { Feather, AntDesign, FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Context as CategoryContext } from '../context/CategoryContext';
 import * as constants from '../constants';
-import ConfirmationModal from './ConfirmationModal';
 import MapModal from './MapModal';
 import { Context as ListingContext } from '../context/ListingContext';
 
@@ -82,6 +82,16 @@ const ListingForm = ({ navigation }) => {
     deleteImageCloudinary(getPublicIdByUri(selectedImage, photos));
     setSelectedImage(null);
     setConfirmationModalVisible(false);
+  };
+
+  const removeImages = images => {
+    if (images.length === 0) {
+      return;
+    }
+
+    for (let i = 0; i < images.length; i++) {
+      deleteImageCloudinary(images[i].publicId);
+    }
   };
 
   return (
@@ -233,6 +243,14 @@ const ListingForm = ({ navigation }) => {
               currency: selectedCurrency
             })}
           />
+          <Button
+            title='Cancel'
+            buttonStyle={styles.cancelButton}
+            onPress={() => {
+              removeImages(photos);
+              navigation.goBack();
+            }}
+          />
           <RBSheet
             ref={refRBSheet}
             closeOnDragDown={true}
@@ -271,10 +289,18 @@ const ListingForm = ({ navigation }) => {
               <Text h5>Choose photos from gallery</Text>
             </TouchableOpacity>
           </RBSheet>
-          <ConfirmationModal
-            isModalVisible={isConfirmationModalVisible}
-            closeModal={() => setConfirmationModalVisible(false)}
-            removeImage={() => removeImage(selectedImage)}
+          <AwesomeAlert
+            show={isConfirmationModalVisible}
+            title='Confirmation'
+            message='Do you want to delete this image?'
+            closeOnTouchOutside={false}
+            showCancelButton={true}
+            showConfirmButton={true}
+            cancelText='No, cancel'
+            confirmText='Yes, delete it'
+            confirmButtonColor='#DD6B55'
+            onCancelPressed={() => setConfirmationModalVisible(false)}
+            onConfirmPressed={() => removeImage(selectedImage)}
           />
           <MapModal
             isModalVisible={isMapModalVisible}
@@ -358,6 +384,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
     marginTop: 25
+  },
+  cancelButton: {
+    backgroundColor: '#f46b61',
+    borderRadius: 10,
+    marginRight: 10,
+    marginTop: 10
   },
   imageOption: {
     padding: 10,
