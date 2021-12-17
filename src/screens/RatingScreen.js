@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Dimensions, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AirbnbRating } from 'react-native-ratings';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -15,6 +15,30 @@ const RatingScreen = ({ navigation }) => {
   const rating = navigation.getParam('rating');
   const [stars, setStars] = useState(isUpdate && rating && rating.stars || 3);
   const [review, setReview] = useState(isUpdate && rating && rating.review || '');
+
+  const readChanges = () => {
+    let number = 0;
+    let changes = {};
+
+    if (rating.stars !== stars) {
+      number++;
+      changes.stars = stars;
+    }
+    if (rating.review !== review) {
+      number++;
+      changes.review = review;
+    }
+
+    return { number, changes };
+  };
+
+  const showToast = () => {
+    if (Platform.OS === 'android') {
+      ToastAndroid.show('You did not change anything!', ToastAndroid.SHORT);
+    } else {
+      console.log('You did not change anything!');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -50,9 +74,16 @@ const RatingScreen = ({ navigation }) => {
           containerStyle={styles.button}
           buttonStyle={{ backgroundColor: constants.MAIN_COLOR }}
           onPress={() => {
-            isUpdate ?
-              updateRating(rating._id, stars, review) :
-              postRating(stars, review, listingId)
+            if (isUpdate) {
+              const { number, changes } = readChanges();
+              if (number === 0) {
+                showToast();
+              } else {
+                updateRating(rating._id, changes);
+              }
+            } else {
+              postRating(stars, review, listingId);
+            }
           }}
         />
       </View>

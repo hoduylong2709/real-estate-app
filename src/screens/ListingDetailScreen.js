@@ -14,7 +14,7 @@ import RatingCard from '../components/RatingCard';
 const { width } = Dimensions.get('screen');
 
 const ListingDetailScreen = ({ navigation }) => {
-  const { listingId, owner, photos, isFavorite, pressIcon, title, location, properties, description, price, currency, userId } = navigation.getParam('listingProperties');
+  const { listingId, owner, photos, isFavorite, pressFavoriteIcon, title, location, properties, description, price, currency, userId } = navigation.getParam('listingProperties');
   const [favoriteListing, setFavoriteListing] = useState(isFavorite);
   const [textShown, setTextShown] = useState(false); // To show the remaining text
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
@@ -78,7 +78,7 @@ const ListingDetailScreen = ({ navigation }) => {
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                  pressIcon();
+                  pressFavoriteIcon();
                   setFavoriteListing(!favoriteListing);
                 }}
               >

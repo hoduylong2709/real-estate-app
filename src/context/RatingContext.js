@@ -55,10 +55,10 @@ const deleteRating = dispatch => async ratingId => {
   }
 };
 
-const updateRating = dispatch => async (ratingId, stars, review) => {
+const updateRating = dispatch => async (ratingId, changes) => {
   try {
     dispatch({ type: 'process_start' });
-    await realEstateApi.patch(`/ratings/${ratingId}`, { stars, review });
+    await realEstateApi.patch(`/ratings/${ratingId}`, { ...changes });
     dispatch({ type: 'post_rating' });
     navigate('ListingDetail');
   } catch (error) {
