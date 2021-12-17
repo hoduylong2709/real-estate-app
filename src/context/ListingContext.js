@@ -6,7 +6,7 @@ import { navigate } from '../navigationRef';
 
 const listingReducer = (state, action) => {
   switch (action.type) {
-    case 'create_start':
+    case 'process_start':
       return { ...state, loading: true };
     case 'upload_image':
       return { ...state, loading: false, photos: [...state.photos, action.payload], errorMessage: '' };
@@ -41,7 +41,7 @@ const listingReducer = (state, action) => {
 };
 
 const uploadImageCloudinary = dispatch => async imageUri => {
-  dispatch({ type: 'create_start' });
+  dispatch({ type: 'process_start' });
   const formData = new FormData();
   const file = {
     name: 'user_listing.jpg',
@@ -88,7 +88,7 @@ const createListing = dispatch => async (
     photos
   }
 ) => {
-  dispatch({ type: 'create_start' });
+  dispatch({ type: 'process_start' });
   try {
     await realEstateApi.post('/listings', {
       title,
@@ -138,6 +138,28 @@ const deleteListing = dispatch => async listingId => {
   }
 };
 
+const updateListing = dispatch => async (listingId, basicInfo, price, categoryInfo, photos) => {
+  dispatch({ type: 'process_start' });
+  try {
+    if (basicInfo) {
+      await realEstateApi.patch(`/listings/${listingId}`, { ...basicInfo });
+    }
+    if (price) {
+      await realEstateApi.patch(`/listings/price/${listingId}`, { ...price });
+    }
+    if (categoryInfo) {
+      await realEstateApi.patch(`/listings/category/${listingId}`, { ...categoryInfo });
+    }
+    if (photos) {
+      await realEstateApi.patch(`/listings/photos/${listingId}`, { ...photos });
+    }
+    dispatch({ type: 'create_listing' });
+    navigate('MyListing');
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Cannot update the listing. Please try again!' });
+  }
+};
+
 const clearErrorMessage = dispatch => () => {
   dispatch({ type: 'clear_error_message' });
 };
@@ -154,7 +176,8 @@ export const { Provider, Context } = createDataContext(
     addFavoriteUser,
     deleteFavoriteUser,
     increaseViews,
-    deleteListing
+    deleteListing,
+    updateListing
   },
   { errorMessage: '', loading: false, listings: [], popularListings: [], photos: [] }
 );

@@ -28,7 +28,7 @@ const ListingCard = ({
   const { addFavoriteUser, deleteFavoriteUser, increaseViews, deleteListing } = useContext(ListingContext);
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
-  const pressIcon = () => {
+  const pressFavoriteIcon = () => {
     if (favoriteListing) {
       deleteFavoriteUser(listingId);
       setFavoriteListing(false);
@@ -50,7 +50,7 @@ const ListingCard = ({
           listingProperties: {
             photos,
             isFavorite: favoriteListing,
-            pressIcon,
+            pressFavoriteIcon,
             title,
             location,
             properties,
@@ -71,6 +71,18 @@ const ListingCard = ({
               <TouchableOpacity
                 style={styles.icon}
                 activeOpacity={0.7}
+                onPress={() => navigation.navigate('EditListing', {
+                  listing: {
+                    listingId,
+                    title,
+                    description,
+                    price,
+                    currency,
+                    properties,
+                    location,
+                    photos
+                  }
+                })}
               >
                 <MaterialIcons name='edit' size={15} color='grey' />
               </TouchableOpacity>
@@ -85,7 +97,7 @@ const ListingCard = ({
             <TouchableOpacity
               activeOpacity={0.5}
               style={[styles.icon, { position: 'absolute', top: 20, right: 30, zIndex: 1 }]}
-              onPress={pressIcon}
+              onPress={pressFavoriteIcon}
             >
               {
                 favoriteListing ?
@@ -113,7 +125,7 @@ const ListingCard = ({
               {title}
             </Text>
             <Text style={styles.price}>
-              {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{currency}
+              {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{currency === 'VNĐ' ? 'VNĐ' : '$'}
             </Text>
           </View>
           <View style={styles.locationContainer}>

@@ -30,7 +30,7 @@ const MyListingScreen = ({ navigation }) => {
                 listingId={listing._id}
                 title={listing.title}
                 price={listing.price.value}
-                currency={listing.price.currency === 'VNĐ' ? 'VNĐ' : '$'}
+                currency={listing.price.currency}
                 location={listing.location}
                 photos={listing.photos}
                 navigation={navigation}

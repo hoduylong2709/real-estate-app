@@ -33,7 +33,11 @@ const ListingDetailScreen = ({ navigation }) => {
   };
 
   const showToast = () => {
-    ToastAndroid.show('Sorry, you can only rate one time!', ToastAndroid.SHORT);
+    if (Platform.OS === 'android') {
+      ToastAndroid.show('Sorry, you can only rate one time!', ToastAndroid.SHORT);
+    } else {
+      console.log('Sorry, you can only rate one time!');
+    }
   };
 
   const checkExistenceOfYourRating = ratings => {
@@ -166,7 +170,7 @@ const ListingDetailScreen = ({ navigation }) => {
               <Text
                 style={{ color: constants.MAIN_COLOR, fontWeight: 'bold', fontSize: 18 }}
               >
-                {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{currency}
+                {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{currency === 'VNĐ' ? 'VNĐ' : '$'}
               </Text>
               <Text
                 style={{ fontSize: 14, color: constants.GREY_COLOR, fontWeight: 'bold' }}

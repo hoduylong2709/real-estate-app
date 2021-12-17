@@ -6,7 +6,7 @@ import Modal from 'react-native-modal';
 import * as Location from 'expo-location';
 import * as constants from '../constants';
 
-const MapModal = ({ isModalVisible, closeModal, locationSubmit }) => {
+const MapModal = ({ isModalVisible, closeModal, locationSubmit, coords }) => {
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
@@ -16,11 +16,18 @@ const MapModal = ({ isModalVisible, closeModal, locationSubmit }) => {
         return alert('Permission to access location was denied!');
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude
-      });
+      if (coords) {
+        setLocation({
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        });
+      } else {
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude
+        });
+      }
     })();
   }, []);
 
@@ -51,7 +58,7 @@ const MapModal = ({ isModalVisible, closeModal, locationSubmit }) => {
                 setLocation({
                   latitude: e.nativeEvent.coordinate.latitude,
                   longitude: e.nativeEvent.coordinate.longitude
-                })
+                });
               }}
             >
               <Callout>
@@ -68,7 +75,15 @@ const MapModal = ({ isModalVisible, closeModal, locationSubmit }) => {
         <Button
           title='Cancel'
           buttonStyle={styles.cancel}
-          onPress={closeModal}
+          onPress={() => {
+            if (coords) {
+              setLocation({
+                latitude: coords.latitude,
+                longitude: coords.longitude
+              });
+            }
+            closeModal();
+          }}
         />
       </View>
     </Modal>

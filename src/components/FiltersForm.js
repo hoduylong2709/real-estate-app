@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ToastAndroid, Platform } from 'react-native';
 import { Button } from 'react-native-elements';
 import ModalSelector from 'react-native-modal-selector';
 import NumericInput from 'react-native-numeric-input';
@@ -12,21 +12,121 @@ import * as filterData from '../filterData';
 import { Context as ListingContext } from '../context/ListingContext';
 import ErrorModal from './ErrorModal';
 
-const FiltersForm = ({ filters, title, description, priceValue, location, categoryName, currency }) => {
-  const [rentOrBuy, setRentOrBuy] = useState('');
-  const [squareFeet, setSquareFeet] = useState('');
-  const [bedrooms, setBedrooms] = useState(0);
-  const [baths, setBaths] = useState(0);
-  const [isNewConstruction, setNewConstruction] = useState('');
-  const [isCloseToPublicTransportation, setCloseToPublicTransportation] = useState('');
+const FiltersForm = ({ filters, title, description, priceValue, location, categoryName, currency, listing, isEdit, updatedObj }) => {
+  const [rentOrBuy, setRentOrBuy] = useState(listing && listing.properties.hasOwnProperty('rentOrBuy') ? listing.properties.rentOrBuy : '');
+  const [squareFeet, setSquareFeet] = useState(listing && listing.properties.hasOwnProperty('squareFeet') ? listing.properties.squareFeet : '');
+  const [bedrooms, setBedrooms] = useState(listing && listing.properties.hasOwnProperty('bedrooms') ? listing.properties.bedrooms : 0);
+  const [baths, setBaths] = useState(listing && listing.properties.hasOwnProperty('baths') ? listing.properties.baths : 0);
+  const [isNewConstruction, setNewConstruction] = useState(listing && listing.properties.hasOwnProperty('newConstruction') ? (listing.properties.newConstruction ? 'Yes' : 'No') : '');
+  const [isCloseToPublicTransportation, setCloseToPublicTransportation] = useState(listing && listing.properties.hasOwnProperty('closeToPublicTransportation') ? (listing.properties.closeToPublicTransportation ? 'Yes' : 'No') : '');
+  const [date, setDate] = useState(listing && listing.properties.hasOwnProperty('yearBuilt') ? listing.properties.yearBuilt : '');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [date, setDate] = useState('');
-  const { createListing, clearErrorMessage, state: { loading, errorMessage, photos } } = useContext(ListingContext);
+  const { createListing, clearErrorMessage, updateListing, state: { loading, errorMessage, photos } } = useContext(ListingContext);
+
+  const readFilterChanges = () => {
+    let numberOfFilterChanges = 0;
+    let filterChanges = {};
+
+    if (listing.properties.hasOwnProperty('rentOrBuy') && listing.properties.rentOrBuy !== rentOrBuy) {
+      numberOfFilterChanges++;
+      filterChanges.rentOrBuy = rentOrBuy;
+    }
+    if (listing.properties.hasOwnProperty('squareFeet') && listing.properties.squareFeet !== squareFeet) {
+      numberOfFilterChanges++;
+      filterChanges.squareFeet = squareFeet;
+    }
+    if (listing.properties.hasOwnProperty('bedrooms') && listing.properties.bedrooms !== bedrooms) {
+      numberOfFilterChanges++;
+      filterChanges.bedrooms = bedrooms;
+    }
+    if (listing.properties.hasOwnProperty('baths') && listing.properties.baths !== baths) {
+      numberOfFilterChanges++;
+      filterChanges.baths = baths;
+    }
+    if (
+      listing.properties.hasOwnProperty('newConstruction') &&
+      listing.properties.newConstruction.toString() !== (isNewConstruction === 'Yes' ? true : false).toString()
+    ) {
+      numberOfFilterChanges++;
+      filterChanges.newConstruction = isNewConstruction === 'Yes' ? true : false;
+    }
+    if (
+      listing.properties.hasOwnProperty('closeToPublicTransportation') &&
+      listing.properties.closeToPublicTransportation.toString() !== (isCloseToPublicTransportation === 'Yes' ? true : false).toString()
+    ) {
+      numberOfFilterChanges++;
+      filterChanges.closeToPublicTransportation = isCloseToPublicTransportation === 'Yes' ? true : false;
+    }
+    if (listing.properties.hasOwnProperty('yearBuilt') && listing.properties.yearBuilt !== date) {
+      numberOfFilterChanges++;
+      filterChanges.yearBuilt = date;
+    }
+
+    return { numberOfFilterChanges, filterChanges };
+  };
 
   const handleDateConfirm = date => {
     setDate(moment(date).format('MM/YYYY'));
     setDatePickerVisibility(false);
   }
+
+  const handleUpdateSubmit = () => {
+    const { numberOfFilterChanges, filterChanges } = readFilterChanges();
+    const totalNumber = updatedObj.number + numberOfFilterChanges;
+    const allowedBasicUpdates = ['title', 'description', 'location', 'isSold'];
+    const allowedPriceUpdates = ['price', 'currency'];
+    const allowedCategoryUpdates = ['rentOrBuy', 'squareFeet', 'bedrooms', 'baths', 'newConstruction', 'yearBuilt', 'closeToPublicTransportation'];
+
+    if (totalNumber === 0) {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('You did not change anything!', ToastAndroid.SHORT);
+      } else {
+        console.log('You did not change anything!');
+      }
+    } else {
+      let basicInfo = null;
+      let price = null;
+      let categoryInfo = null;
+      let photos = null;
+
+      basicInfo = Object.keys(updatedObj.changes)
+        .filter(key => allowedBasicUpdates.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = updatedObj.changes[key];
+          return obj;
+        }, {});
+
+      price = Object.keys(updatedObj.changes)
+        .filter(key => allowedPriceUpdates.includes(key))
+        .reduce((obj, key) => {
+          if (key === 'price') {
+            obj['value'] = updatedObj.changes[key];
+          } else {
+            obj[key] = updatedObj.changes[key];
+          }
+          return obj;
+        }, {});
+
+      categoryInfo = Object.keys(filterChanges)
+        .filter(key => allowedCategoryUpdates.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = filterChanges[key];
+          return obj;
+        }, {});
+
+      if (updatedObj.changes.hasOwnProperty('photos')) {
+        photos = updatedObj.changes.photos
+      }
+
+      updateListing(
+        listing.listingId,
+        basicInfo,
+        price,
+        categoryInfo,
+        photos
+      );
+    }
+  };
 
   const handleSubmit = () => {
     const price = { value: priceValue, currency };
@@ -224,9 +324,15 @@ const FiltersForm = ({ filters, title, description, priceValue, location, catego
         }
       </View>
       <Button
-        title='Add Listing'
+        title={isEdit ? 'Update Listing' : 'Add Listing'}
         buttonStyle={styles.submit}
-        onPress={handleSubmit}
+        onPress={() => {
+          if (!isEdit) {
+            handleSubmit();
+          } else {
+            handleUpdateSubmit();
+          }
+        }}
       />
       <ErrorModal
         isError={errorMessage ? true : false}

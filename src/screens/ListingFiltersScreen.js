@@ -14,8 +14,10 @@ const ListingFiltersScreen = ({ navigation }) => {
   const description = navigation.getParam('description');
   const price = navigation.getParam('price');
   const location = navigation.getParam('location');
-  const images = navigation.getParam('images');
   const currency = navigation.getParam('currency');
+  const listing = navigation.getParam('listing');
+  const isEdit = navigation.getParam('isEdit');
+  const updatedObj = navigation.getParam('updatedObj');
 
   return (
     <View style={styles.container}>
@@ -25,9 +27,11 @@ const ListingFiltersScreen = ({ navigation }) => {
         description={description}
         priceValue={price}
         location={location}
-        images={images}
         categoryName={categoryName}
         currency={currency}
+        listing={listing}
+        isEdit={isEdit}
+        updatedObj={updatedObj}
       />
     </View>
   );

@@ -101,7 +101,7 @@ const CameraScreen = ({ navigation }) => {
                       style={{
                         width: 70,
                         height: 70,
-                        bottom: 90,
+                        bottom: 20,
                         borderRadius: 50,
                         backgroundColor: '#fff'
                       }}

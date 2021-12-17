@@ -13,20 +13,80 @@ import * as constants from '../constants';
 import MapModal from './MapModal';
 import { Context as ListingContext } from '../context/ListingContext';
 
-const ListingForm = ({ navigation }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState(null);
-  const [selectedCurrency, setSelectedCurrency] = useState('USA');
-  const [category, setCategory] = useState('');
+const ListingForm = ({ navigation, isEdit, listing }) => {
+  const [title, setTitle] = useState(isEdit && listing ? listing.title : '');
+  const [description, setDescription] = useState(isEdit && listing ? listing.description : '');
+  const [price, setPrice] = useState(isEdit && listing ? listing.price : null);
+  const [selectedCurrency, setSelectedCurrency] = useState(isEdit && listing ? listing.currency : 'USA');
+  const [category, setCategory] = useState(isEdit && listing ? listing.properties.categoryName : '');
   const [isConfirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const [isMapModalVisible, setMapModalVisible] = useState(false);
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(isEdit && listing ? listing.photos : []);
+  const [editableImages, setEditableImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const { state: { categories } } = useContext(CategoryContext);
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(isEdit && listing ? listing.location : null);
   const { state: { loading, photos }, uploadImageCloudinary, deleteImageCloudinary } = useContext(ListingContext);
   const refRBSheet = useRef();
+
+  const readChanges = () => {
+    let number = 0;
+    let changes = {};
+
+    if (listing.title !== title) {
+      number++;
+      changes.title = title;
+    }
+    if (listing.description !== description) {
+      number++;
+      changes.description = description;
+    }
+    if (listing.price !== price) {
+      number++;
+      changes.price = price;
+    }
+    if (listing.currency !== selectedCurrency) {
+      number++;
+      changes.currency = selectedCurrency;
+    }
+    if (listing.location.latitude !== location.latitude) {
+      number++;
+      changes.location = location;
+    }
+    if (listing.photos.length !== images.length || photos.length !== 0) {
+      number++;
+      handleImageChange(changes);
+    }
+
+    return { number, changes };
+  };
+
+  const handleImageChange = changes => {
+    changes.photos = {};
+
+    if (images.length === 0) {
+      changes.photos.new = photos.slice();
+      changes.photos.deleted = listing.photos.slice();
+    }
+
+    if (images.length === listing.photos.length) {
+      changes.photos.new = photos.slice();
+    } else {
+      if (photos.length !== 0) {
+        changes.photos.new = photos.slice();
+      }
+      changes.photos.deleted = listing.photos.filter(photo => !images.some(image => image._id === photo._id));
+    }
+
+    if (changes.hasOwnProperty('photos') && changes.photos.hasOwnProperty('new')) {
+      changes.photos.new = changes.photos.new.map(photo => {
+        const asArray = Object.entries(photo);
+        const filtered = asArray.filter(([key, value]) => key !== 'localUri');
+        const justStrings = Object.fromEntries(filtered);
+        return justStrings;
+      });
+    }
+  };
 
   const locationSubmit = location => {
     setLocation(location);
@@ -56,7 +116,11 @@ const ListingForm = ({ navigation }) => {
             ToastAndroid.show('Sorry, you can upload 10 images in limit!', ToastAndroid.SHORT);
             return;
           }
-          setImages([...images, result.uri]);
+          if (isEdit) {
+            setEditableImages([...editableImages, result.uri]);
+          } else {
+            setImages([...images, result.uri]);
+          }
           setSelectedImage(result.uri);
           refRBSheet.current.close();
           uploadImageCloudinary(result.uri);
@@ -66,7 +130,11 @@ const ListingForm = ({ navigation }) => {
   };
 
   const captureImageFromCamera = capturedImage => {
-    setImages([...images, capturedImage.uri]);
+    if (isEdit) {
+      setEditableImages([...editableImages, capturedImage.uri]);
+    } else {
+      setImages([...images, capturedImage.uri]);
+    }
     setSelectedImage(capturedImage.uri);
     uploadImageCloudinary(capturedImage.uri);
   };
@@ -77,12 +145,25 @@ const ListingForm = ({ navigation }) => {
   };
 
   const removeImage = selectedImage => {
-    const newImages = images.filter(image => image !== selectedImage);
-    setImages(newImages);
-    deleteImageCloudinary(getPublicIdByUri(selectedImage, photos));
+    let newImages = [];
+
+    if (isEdit) {
+      if (selectedImage._id) {
+        newImages = images.filter(image => image._id !== selectedImage._id);
+        setImages(newImages);
+      } else {
+        newImages = editableImages.filter(editableImage => editableImage !== selectedImage);
+        setEditableImages(newImages);
+        deleteImageCloudinary(getPublicIdByUri(selectedImage, photos));
+      }
+    } else {
+      newImages = images.filter(image => image !== selectedImage);
+      setImages(newImages);
+      deleteImageCloudinary(getPublicIdByUri(selectedImage, photos));
+    }
     setSelectedImage(null);
     setConfirmationModalVisible(false);
-  };
+  }
 
   const removeImages = images => {
     if (images.length === 0) {
@@ -158,11 +239,12 @@ const ListingForm = ({ navigation }) => {
             })}
             selectStyle={{ padding: 3, borderWidth: 0 }}
             onChange={option => setCategory(option.label)}
+            disabled={isEdit}
           >
             <TextInput
               editable={false}
               placeholder='Select category...'
-              style={{ fontSize: 16, textAlign: 'right', color: 'black' }}
+              style={{ fontSize: 16, textAlign: 'right', color: isEdit ? '#bcbcbc' : 'black' }}
               value={category}
             />
           </ModalSelector>
@@ -192,7 +274,7 @@ const ListingForm = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15, marginBottom: 10, marginRight: 5 }}>
-              {images.length > 0 && images.map(image => (
+              {!isEdit && images.length > 0 && images.map(image => (
                 <TouchableOpacity
                   key={image}
                   activeOpacity={0.5}
@@ -204,6 +286,7 @@ const ListingForm = ({ navigation }) => {
                 >
                   {
                     loading && selectedImage === image &&
+                    loading &&
                     <View style={styles.loading}>
                       <ActivityIndicator
                         size='small'
@@ -212,6 +295,42 @@ const ListingForm = ({ navigation }) => {
                     </View>
                   }
                   <Image source={{ uri: image }} style={styles.image} />
+                </TouchableOpacity>
+              ))}
+              {isEdit && images.length > 0 && images.map(image => (
+                <TouchableOpacity
+                  key={image._id}
+                  activeOpacity={0.5}
+                  onPress={() => {
+                    setConfirmationModalVisible(true);
+                    setSelectedImage(image);
+                  }}
+                  style={styles.imageContainer}
+                >
+                  <Image source={{ uri: image.imageUrl }} style={styles.image} />
+                </TouchableOpacity>
+              ))}
+              {isEdit && editableImages.length > 0 && editableImages.map(editableImage => (
+                <TouchableOpacity
+                  key={editableImage}
+                  activeOpacity={0.5}
+                  onPress={() => {
+                    setConfirmationModalVisible(true);
+                    setSelectedImage(editableImage);
+                  }}
+                  style={styles.imageContainer}
+                >
+                  {
+                    loading && selectedImage === editableImage &&
+                    loading &&
+                    <View style={styles.loading}>
+                      <ActivityIndicator
+                        size='small'
+                        color='white'
+                      />
+                    </View>
+                  }
+                  <Image source={{ uri: editableImage }} style={styles.image} />
                 </TouchableOpacity>
               ))}
               <Button
@@ -230,18 +349,34 @@ const ListingForm = ({ navigation }) => {
               !price ||
               !category ||
               !location ||
-              images.length === 0 ||
+              (images.length === 0 && photos.length === 0) ||
               loading
             }
             disabledStyle={{ backgroundColor: '#bcbcbc' }}
-            onPress={() => navigation.navigate('ListingFilters', {
-              categoryName: category,
-              title: title,
-              description: description,
-              price: price,
-              location: location,
-              currency: selectedCurrency
-            })}
+            onPress={() => {
+              const listingInfo = {
+                categoryName: category,
+                title: title,
+                description: description,
+                price: price,
+                location: location,
+                currency: selectedCurrency,
+                listing: listing
+              };
+
+              if (!isEdit) {
+                navigation.navigate('ListingFilters', {
+                  ...listingInfo
+                })
+              } else {
+                const updatedObj = readChanges();
+                navigation.navigate('ListingFilters', {
+                  ...listingInfo,
+                  isEdit: isEdit,
+                  updatedObj: updatedObj
+                })
+              }
+            }}
           />
           <Button
             title='Cancel'
@@ -306,6 +441,9 @@ const ListingForm = ({ navigation }) => {
             isModalVisible={isMapModalVisible}
             closeModal={() => setMapModalVisible(false)}
             locationSubmit={locationSubmit}
+            coords={
+              isEdit ? { latitude: location.latitude, longitude: location.longitude } : null
+            }
           />
         </View>
       </ScrollView>
