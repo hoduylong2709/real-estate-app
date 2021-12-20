@@ -5,6 +5,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import { Context as ListingContext } from '../context/ListingContext';
+import { Context as UserContext } from '../context/UserContext';
 import { countAverageStars } from '../utils/countAverageStars';
 const { width } = Dimensions.get('screen');
 
@@ -26,14 +27,17 @@ const ListingCard = ({
   const [favoriteListing, setFavoriteListing] = useState(isFavoriteByUser);
   const [isConfirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const { addFavoriteUser, deleteFavoriteUser, increaseViews, deleteListing } = useContext(ListingContext);
+  const { addFavoriteListing, deleteFavoriteListing } = useContext(UserContext);
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
-  const pressFavoriteIcon = () => {
+  const pressFavoriteIcon = (favoriteListing) => {
     if (favoriteListing) {
       deleteFavoriteUser(listingId);
+      deleteFavoriteListing(listingId);
       setFavoriteListing(false);
     } else {
       addFavoriteUser(listingId);
+      addFavoriteListing(listingId);
       setFavoriteListing(true);
     }
   };
@@ -97,7 +101,9 @@ const ListingCard = ({
             <TouchableOpacity
               activeOpacity={0.5}
               style={[styles.icon, { position: 'absolute', top: 20, right: 30, zIndex: 1 }]}
-              onPress={pressFavoriteIcon}
+              onPress={() => {
+                pressFavoriteIcon(favoriteListing);
+              }}
             >
               {
                 favoriteListing ?

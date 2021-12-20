@@ -78,7 +78,7 @@ const ListingDetailScreen = ({ navigation }) => {
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                  pressFavoriteIcon();
+                  pressFavoriteIcon(favoriteListing);
                   setFavoriteListing(!favoriteListing);
                 }}
               >

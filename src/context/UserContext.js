@@ -88,8 +88,16 @@ const getUserById = dispatch => async id => {
   }
 };
 
+const addFavoriteListing = dispatch => async listingId => {
+  await realEstateApi.post('/users/me/favorite', { listingId });
+};
+
+const deleteFavoriteListing = dispatch => async listingId => {
+  await realEstateApi.delete(`/users/me/favorite/${listingId}`);
+};
+
 export const { Provider, Context } = createDataContext(
   userReducer,
-  { deleteAvatar, postAvatar, getUserById },
+  { deleteAvatar, postAvatar, getUserById, addFavoriteListing, deleteFavoriteListing },
   { loading: false, errorMessage: '', user: null }
 );

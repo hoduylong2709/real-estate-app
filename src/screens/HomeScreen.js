@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, ScrollView, Image, Text, ActivityIndicator } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -11,8 +11,12 @@ import ListingCard from '../components/ListingCard';
 
 const HomeScreen = ({ navigation }) => {
   const { fetchCategories, state: { categories, categoryLoading } } = useContext(CategoryContext);
-  const { fetchPopularListings, state: { popularListings, loading } } = useContext(ListingContext);
+  const { fetchPopularListings, clearPopularListings, state: { popularListings, loading } } = useContext(ListingContext);
   const userId = navigation.getParam('userId');
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const checkFavorite = listing => {
     return listing.favoriteUsers.includes(userId);
@@ -21,7 +25,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <NavigationEvents onWillFocus={() => {
-        fetchCategories();
+        clearPopularListings();
         fetchPopularListings();
       }} />
       <Spacer>
@@ -64,7 +68,7 @@ const HomeScreen = ({ navigation }) => {
                 listingId={popularListing._id}
                 title={popularListing.title}
                 price={popularListing.price.value}
-                currency={popularListing.price.currency === 'VNĐ' ? 'VNĐ' : '$'}
+                currency={popularListing.price.currency}
                 location={popularListing.location}
                 photos={popularListing.photos}
                 navigation={navigation}

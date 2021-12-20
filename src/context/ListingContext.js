@@ -22,6 +22,8 @@ const listingReducer = (state, action) => {
       return { ...state, loading: true };
     case 'fetch_listings':
       return { ...state, listings: action.payload, loading: false };
+    case 'fetch_favorite_listings':
+      return { ...state, favoriteListings: action.payload, loading: false };
     case 'fetch_popular_listings':
       return { ...state, popularListings: action.payload, loading: false };
     case 'delete_listing':
@@ -35,6 +37,8 @@ const listingReducer = (state, action) => {
       return { ...state, errorMessage: action.payload, loading: false };
     case 'clear_error_message':
       return { ...state, errorMessage: '' };
+    case 'clear_popular_listings':
+      return { ...state, popularListings: [] };
     default:
       return state;
   }
@@ -111,6 +115,12 @@ const fetchListings = dispatch => async () => {
   dispatch({ type: 'fetch_listings', payload: response.data });
 };
 
+const fetchFavoriteListings = dispatch => async () => {
+  dispatch({ type: 'start_fetching' });
+  const response = await realEstateApi.get('/users/me/favorite');
+  dispatch({ type: 'fetch_favorite_listings', payload: response.data });
+};
+
 const fetchPopularListings = dispatch => async () => {
   dispatch({ type: 'start_fetching' });
   const response = await realEstateApi.get('/listings/popular');
@@ -164,6 +174,10 @@ const clearErrorMessage = dispatch => () => {
   dispatch({ type: 'clear_error_message' });
 };
 
+const clearPopularListings = dispatch => () => {
+  dispatch({ type: 'clear_popular_listings' });
+};
+
 export const { Provider, Context } = createDataContext(
   listingReducer,
   {
@@ -177,7 +191,9 @@ export const { Provider, Context } = createDataContext(
     deleteFavoriteUser,
     increaseViews,
     deleteListing,
-    updateListing
+    updateListing,
+    fetchFavoriteListings,
+    clearPopularListings
   },
-  { errorMessage: '', loading: false, listings: [], popularListings: [], photos: [] }
+  { errorMessage: '', loading: false, listings: [], popularListings: [], photos: [], favoriteListings: [] }
 );

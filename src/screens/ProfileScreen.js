@@ -19,6 +19,7 @@ const ProfileScreen = ({ navigation }) => {
   const [isAvatarModalVisible, setAvatarModalVisible] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [userId, setUserId] = useState('');
   const [avatar, setAvatar] = useState('');
   const [publicIdCloudinary, setPublicIdCloudinary] = useState('');
 
@@ -63,6 +64,7 @@ const ProfileScreen = ({ navigation }) => {
         (async () => {
           const userJson = await AsyncStorage.getItem('userInfo');
           const userObj = JSON.parse(userJson);
+          setUserId(userObj._id);
           setFirstName(userObj.firstName);
           setLastName(userObj.lastName);
           if (userObj.avatar) {
@@ -118,6 +120,7 @@ const ProfileScreen = ({ navigation }) => {
         <Spacer />
         <TouchableOpacity
           activeOpacity={0.5}
+          onPress={() => navigation.navigate('MyFavoriteListing', { userId })}
         >
           <ProfileOption
             optionName='My Favorites'
