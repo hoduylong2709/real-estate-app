@@ -29,6 +29,7 @@ import RatingScreen from './src/screens/RatingScreen';
 import CameraScreen from './src/screens/CameraScreen';
 import EditListingScreen from './src/screens/EditListingScreen';
 import MyFavoriteListingScreen from './src/screens/MyFavoriteListingScreen';
+import AccountDetailScreen from './src/screens/AccountDetailScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -77,7 +78,8 @@ const profileFlow = createStackNavigator({
   Camera: CameraScreen,
   ListingFilters: ListingFiltersScreen,
   ListingDetail: ListingDetailScreen,
-  Rating: RatingScreen
+  Rating: RatingScreen,
+  AccountDetail: AccountDetailScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
@@ -93,7 +95,8 @@ profileFlow.navigationOptions = ({ navigation }) => {
     routeName === 'EditListing' ||
     routeName === 'ListingFilters' ||
     routeName === 'Camera' ||
-    routeName === 'ListingDetail') {
+    routeName === 'ListingDetail' ||
+    routeName === 'AccountDetail') {
     tabBarVisible = false;
   }
 

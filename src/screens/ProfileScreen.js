@@ -17,9 +17,7 @@ const ProfileScreen = ({ navigation }) => {
   const { deleteAvatar, postAvatar, state: { loading } } = useContext(UserContext);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isAvatarModalVisible, setAvatarModalVisible] = useState(false);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [userId, setUserId] = useState('');
+  const [userObj, setUserObj] = useState(null);
   const [avatar, setAvatar] = useState('');
   const [publicIdCloudinary, setPublicIdCloudinary] = useState('');
 
@@ -64,9 +62,7 @@ const ProfileScreen = ({ navigation }) => {
         (async () => {
           const userJson = await AsyncStorage.getItem('userInfo');
           const userObj = JSON.parse(userJson);
-          setUserId(userObj._id);
-          setFirstName(userObj.firstName);
-          setLastName(userObj.lastName);
+          setUserObj(userObj);
           if (userObj.avatar) {
             setAvatar(userObj.avatar);
             setPublicIdCloudinary(userObj.publicIdCloudinary);
@@ -74,7 +70,7 @@ const ProfileScreen = ({ navigation }) => {
         })();
       }} />
       <TouchableOpacity
-        activeOpacity={0.5}
+        activeOpacity={0.8}
         onPress={openAvatarModal}
         style={styles.avatarContainer}
       >
@@ -98,14 +94,17 @@ const ProfileScreen = ({ navigation }) => {
           source={require('../../assets/user.png')}
           size={100}
         />)}
-        <AntDesign
-          name='camera'
-          size={22}
-          color='grey'
-          style={{ position: 'absolute', right: 10, bottom: 0, zIndex: 1 }}
-        />
+        <View
+          style={styles.cameraIcon}
+        >
+          <AntDesign
+            name='camerao'
+            size={18}
+            color='white'
+          />
+        </View>
       </TouchableOpacity>
-      {firstName && lastName ? <Text style={{ fontSize: 18, margin: 15 }}>{firstName} {lastName}</Text> : null}
+      {userObj ? <Text style={{ fontSize: 18, margin: 15 }}>{userObj.firstName} {userObj.lastName}</Text> : null}
       <Spacer />
       <View>
         <TouchableOpacity
@@ -120,7 +119,7 @@ const ProfileScreen = ({ navigation }) => {
         <Spacer />
         <TouchableOpacity
           activeOpacity={0.5}
-          onPress={() => navigation.navigate('MyFavoriteListing', { userId })}
+          onPress={() => navigation.navigate('MyFavoriteListing', { userId: userObj._id })}
         >
           <ProfileOption
             optionName='My Favorites'
@@ -130,6 +129,7 @@ const ProfileScreen = ({ navigation }) => {
         <Spacer />
         <TouchableOpacity
           activeOpacity={0.5}
+          onPress={() => navigation.navigate('AccountDetail', { userObj })}
         >
           <ProfileOption
             optionName='Account Details'
@@ -209,6 +209,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 53
   },
+  cameraIcon: {
+    position: 'absolute',
+    right: 10,
+    bottom: 0,
+    zIndex: 1,
+    padding: 3,
+    backgroundColor: constants.MAIN_COLOR,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'white'
+  }
 });
 
 export default ProfileScreen;

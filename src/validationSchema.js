@@ -26,3 +26,14 @@ export const signupValidationSchema = yup.object().shape({
     .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Please enter a valid password')
     .required('Password is required')
 });
+
+export const profileValidationSchema = yup.object().shape({
+  firstName: yup
+    .string()
+    .required('First name is required!'),
+  lastName: yup
+    .string()
+    .required('Last name is required!'),
+  phoneNumber: yup
+    .number()
+});

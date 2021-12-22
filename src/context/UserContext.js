@@ -2,17 +2,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import createDataContext from './createDataContext';
 import realEstateApi from '../api/realEstate';
 import axios from 'axios';
+import { navigate } from '../navigationRef';
 
 const userReducer = (state, action) => {
   switch (action.type) {
     case 'process_start':
       return { ...state, loading: true };
     case 'post_avatar':
-      return { errorMessage: '', loading: false };
+      return { ...state, errorMessage: '', loading: false };
     case 'get_user':
-      return { errorMessage: '', user: action.payload };
+      return { ...state, errorMessage: '', user: action.payload };
+    case 'edit_profile':
+      return { ...state, errorMessage: '', loading: false };
     case 'add_error':
-      return { errorMessage: action.payload, loading: false };
+      return { ...state, errorMessage: action.payload, loading: false };
     default:
       return state;
   }
@@ -96,8 +99,20 @@ const deleteFavoriteListing = dispatch => async listingId => {
   await realEstateApi.delete(`/users/me/favorite/${listingId}`);
 };
 
+const editProfile = dispatch => async updatedObj => {
+  dispatch({ type: 'process_start' });
+  try {
+    const response = await realEstateApi.patch('/users/me', { ...updatedObj });
+    await AsyncStorage.setItem('userInfo', JSON.stringify(response.data));
+    dispatch({ type: 'edit_profile' });
+    navigate('Profile');
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Cannot edit your profile. Please try again!' });
+  }
+};
+
 export const { Provider, Context } = createDataContext(
   userReducer,
-  { deleteAvatar, postAvatar, getUserById, addFavoriteListing, deleteFavoriteListing },
+  { deleteAvatar, postAvatar, getUserById, addFavoriteListing, deleteFavoriteListing, editProfile },
   { loading: false, errorMessage: '', user: null }
 );
