@@ -2,7 +2,7 @@ import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { setNavigator } from './src/navigationRef';
 import * as constants from './src/constants';
 import { Provider as OnboardProvider } from './src/context/OnboardContext';
@@ -11,6 +11,7 @@ import { Provider as CategoryProvider } from './src/context/CategoryContext';
 import { Provider as ListingProvider } from './src/context/ListingContext';
 import { Provider as UserProvider } from './src/context/UserContext';
 import { Provider as RatingProvider } from './src/context/RatingContext';
+import { Provider as ConversationProvider } from './src/context/ConversationContext';
 import OnboardScreen from './src/screens/OnboardScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
@@ -18,7 +19,7 @@ import SignupScreen from './src/screens/SignupScreen';
 import VerifyScreen from './src/screens/VerifyScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import CategoriesScreen from './src/screens/CategoriesScreen';
-import ChatScreen from './src/screens/ChatScreen';
+import MessagesScreen from './src/screens/MessagesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AddListingScreen from './src/screens/AddListingScreen';
 import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
@@ -30,6 +31,7 @@ import CameraScreen from './src/screens/CameraScreen';
 import EditListingScreen from './src/screens/EditListingScreen';
 import MyFavoriteListingScreen from './src/screens/MyFavoriteListingScreen';
 import AccountDetailScreen from './src/screens/AccountDetailScreen';
+import ChatScreen from './src/screens/ChatScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -107,10 +109,34 @@ profileFlow.navigationOptions = ({ navigation }) => {
   };
 };
 
+const chatFlow = createStackNavigator({
+  Messages: MessagesScreen,
+  Chat: ChatScreen
+}, {
+  defaultNavigationOptions: {
+    headerTitleAlign: 'center'
+  }
+});
+
+chatFlow.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+  if (routeName === 'Chat') {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarLabel: () => { return null },
+    tabBarIcon: ({ focused }) => <AntDesign name='message1' size={constants.TAB_BAR_ICON_SIZE} color={focused ? constants.MAIN_COLOR : 'grey'} />,
+    tabBarVisible
+  };
+};
+
 const mainFlow = createBottomTabNavigator({
   homeFlow,
   Categories: CategoriesScreen,
-  Chat: ChatScreen,
+  chatFlow,
   profileFlow
 });
 
@@ -125,18 +151,20 @@ const App = createAppContainer(switchNavigator);
 
 export default () => {
   return (
-    <RatingProvider>
-      <UserProvider>
-        <ListingProvider>
-          <CategoryProvider>
-            <AuthProvider>
-              <OnboardProvider>
-                <App ref={(navigator) => { setNavigator(navigator) }} />
-              </OnboardProvider>
-            </AuthProvider>
-          </CategoryProvider>
-        </ListingProvider>
-      </UserProvider>
-    </RatingProvider>
+    <ConversationProvider>
+      <RatingProvider>
+        <UserProvider>
+          <ListingProvider>
+            <CategoryProvider>
+              <AuthProvider>
+                <OnboardProvider>
+                  <App ref={(navigator) => { setNavigator(navigator) }} />
+                </OnboardProvider>
+              </AuthProvider>
+            </CategoryProvider>
+          </ListingProvider>
+        </UserProvider>
+      </RatingProvider>
+    </ConversationProvider>
   );
 };

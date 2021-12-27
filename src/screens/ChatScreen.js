@@ -1,28 +1,27 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
-import * as constants from '../constants';
 
 const ChatScreen = () => {
   return (
-    <View style={styles.container}>
+    <View>
       <Text>Chat Screen</Text>
     </View>
   );
 };
 
-ChatScreen.navigationOptions = {
-  tabBarLabel: () => { return null },
-  tabBarIcon: ({ focused }) => <AntDesign name='message1' size={constants.TAB_BAR_ICON_SIZE} color={focused ? constants.MAIN_COLOR : 'grey'} />
+ChatScreen.navigationOptions = () => {
+  return {
+    headerTintColor: constants.MAIN_COLOR,
+    headerTitleStyle: {
+      color: 'black'
+    },
+    headerStyle: {
+      elevation: 0
+    }
+  };
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-});
+const styles = StyleSheet.create({});
 
 export default ChatScreen;
 
