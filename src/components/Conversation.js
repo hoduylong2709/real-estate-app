@@ -30,7 +30,7 @@ const Conversation = ({ conversation, friend, currentUser }) => {
     <View style={styles.container}>
       <View style={{ position: 'relative' }}>
         <Avatar
-          size={55}
+          size={47}
           rounded
           source={{ uri: friend.avatar }}
         />
@@ -40,7 +40,7 @@ const Conversation = ({ conversation, friend, currentUser }) => {
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{friend.firstName} {friend.lastName}</Text>
           <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'gray' }}>
-            {moment(messages[messages.length - 1]?.createdAt).format('DD/MM/yyyy')}
+            {moment(messages[0]?.createdAt).format('DD/MM/yyyy')}
           </Text>
         </View>
         <Text
@@ -48,8 +48,8 @@ const Conversation = ({ conversation, friend, currentUser }) => {
           numberOfLines={1}
           ellipsizeMode='tail'
         >
-          {messages[messages.length - 1]?.senderId === friend._id ? `${friend.firstName}: ` : 'You: '}
-          {messages[messages.length - 1]?.text}
+          {messages[0]?.senderId === friend._id ? `${friend.firstName}: ` : 'You: '}
+          {messages[0]?.text}
         </Text>
       </View>
     </View>
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   conversationInfo: {
     marginLeft: 10,
-    width: 230
+    width: 260
   }
 });
 

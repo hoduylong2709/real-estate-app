@@ -36,7 +36,11 @@ const MessagesScreen = ({ navigation }) => {
                   key={item._id}
                   activeOpacity={0.7}
                   style={{ width: width - 40, marginTop: 20 }}
-                  onPress={() => navigation.navigate('Chat')}
+                  onPress={() => navigation.navigate('Chat', {
+                    friend: item.members.find(member => member._id !== userObj._id),
+                    currentUser: userObj,
+                    conversation: item
+                  })}
                 >
                   <Conversation
                     conversation={item}
