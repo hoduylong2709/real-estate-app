@@ -1,6 +1,7 @@
 import React, { useState, useContext, useRef } from 'react';
 import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image, ToastAndroid } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Avatar } from 'react-native-elements';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -8,6 +9,7 @@ import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import PropertyList from '../components/PropertyList';
 import { Context as RatingContext } from '../context/RatingContext';
+import { Context as ConversationContext } from '../context/ConversationContext';
 import { countAverageStars } from '../utils/countAverageStars';
 import RatingCard from '../components/RatingCard';
 const { width } = Dimensions.get('screen');
@@ -18,7 +20,9 @@ const ListingDetailScreen = ({ navigation }) => {
   const [textShown, setTextShown] = useState(false); // To show the remaining text
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
   const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
+  const [currentUser, setCurrentUser] = useState(null);
   const { state: { ratings }, fetchRatings } = useContext(RatingContext);
+  const { state, fetchConversations } = useContext(ConversationContext);
   const refRBSheet = useRef();
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
@@ -54,6 +58,12 @@ const ListingDetailScreen = ({ navigation }) => {
     <View style={styles.container}>
       <NavigationEvents onWillFocus={() => {
         fetchRatings(listingId);
+        (async () => {
+          const userJson = await AsyncStorage.getItem('userInfo');
+          const userObj = JSON.parse(userJson);
+          setCurrentUser(userObj);
+          fetchConversations(userObj._id);
+        })();
       }} />
       <ScrollView showsVerticalScrollIndicator={true}>
         {/* House image */}
@@ -300,6 +310,17 @@ const ListingDetailScreen = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={[styles.contactButton, { marginRight: 15 }]}
+              onPress={() => {
+                navigation.navigate('Chat', {
+                  friend: owner,
+                  currentUser,
+                  conversation: state.find(
+                    conversation => (conversation.members[0]._id === owner._id || conversation.members[0]._id === currentUser._id) &&
+                      (conversation.members[1]._id === owner._id || conversation.members[1]._id === currentUser._id)
+                  )
+                });
+                refRBSheet.current.close();
+              }}
             >
               <AntDesign name='message1' size={24} color={constants.MAIN_COLOR} />
             </TouchableOpacity>

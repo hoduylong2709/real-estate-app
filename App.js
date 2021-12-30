@@ -46,6 +46,7 @@ const homeFlow = createStackNavigator({
   Camera: CameraScreen,
   ListingFilters: ListingFiltersScreen,
   ListingDetail: ListingDetailScreen,
+  Chat: ChatScreen,
   Rating: RatingScreen
 }, {
   defaultNavigationOptions: {
@@ -61,7 +62,8 @@ homeFlow.navigationOptions = ({ navigation }) => {
     routeName === 'ListingFilters' ||
     routeName === 'ListingDetail' ||
     routeName === 'Rating' ||
-    routeName === 'Camera') {
+    routeName === 'Camera' ||
+    routeName === 'Chat') {
     tabBarVisible = false;
   }
 
