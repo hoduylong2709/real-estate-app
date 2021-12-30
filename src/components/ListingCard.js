@@ -47,7 +47,7 @@ const ListingCard = ({
       style={{ marginLeft: 15, marginRight: 15, marginTop: 3, marginBottom: 20 }}
       activeOpacity={0.9}
       onPress={() => {
-        if (userId !== owner) {
+        if (userId !== owner._id) {
           increaseViews(listingId);
         }
         navigation.navigate('ListingDetail', {
@@ -70,7 +70,7 @@ const ListingCard = ({
     >
       <View style={styles.card}>
         {
-          userId === owner ?
+          userId === owner._id ?
             <View style={{ position: 'absolute', zIndex: 1, top: 20, right: 30 }}>
               <TouchableOpacity
                 style={styles.icon}

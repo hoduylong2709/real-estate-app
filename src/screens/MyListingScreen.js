@@ -39,7 +39,7 @@ const MyListingScreen = ({ navigation }) => {
                 description={listing.description}
                 owner={listing.owner}
                 ratings={listing.ratings}
-                userId={listing.owner}
+                userId={listing.owner._id}
               />
             )
           )}

@@ -7,7 +7,6 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import * as constants from '../constants';
 import PropertyList from '../components/PropertyList';
-import { Context as UserContext } from '../context/UserContext';
 import { Context as RatingContext } from '../context/RatingContext';
 import { countAverageStars } from '../utils/countAverageStars';
 import RatingCard from '../components/RatingCard';
@@ -19,7 +18,6 @@ const ListingDetailScreen = ({ navigation }) => {
   const [textShown, setTextShown] = useState(false); // To show the remaining text
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
   const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
-  const { state: { user }, getUserById } = useContext(UserContext);
   const { state: { ratings }, fetchRatings } = useContext(RatingContext);
   const refRBSheet = useRef();
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
@@ -55,7 +53,6 @@ const ListingDetailScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <NavigationEvents onWillFocus={() => {
-        getUserById(owner);
         fetchRatings(listingId);
       }} />
       <ScrollView showsVerticalScrollIndicator={true}>
@@ -82,7 +79,7 @@ const ListingDetailScreen = ({ navigation }) => {
                   setFavoriteListing(!favoriteListing);
                 }}
               >
-                {userId !== owner && <View style={styles.headerBtn}>
+                {userId !== owner._id && <View style={styles.headerBtn}>
                   {
                     favoriteListing ?
                       <MaterialIcons
@@ -182,7 +179,7 @@ const ListingDetailScreen = ({ navigation }) => {
               style={styles.contactOwnerButton}
               activeOpacity={0.85}
               onPress={() => refRBSheet.current.open()}
-              disabled={userId === owner}
+              disabled={userId === owner._id}
             >
               <Text
                 style={{ color: 'white' }}
@@ -275,11 +272,11 @@ const ListingDetailScreen = ({ navigation }) => {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {
-              user ?
+              owner ?
                 <Avatar
                   rounded
                   size={50}
-                  source={{ uri: user.avatar }}
+                  source={{ uri: owner.avatar }}
                 /> :
                 <Avatar
                   rounded
@@ -289,14 +286,14 @@ const ListingDetailScreen = ({ navigation }) => {
             }
             <View style={{ paddingHorizontal: 10 }}>
               {
-                user &&
+                owner &&
                 <Text
                   style={{ fontSize: 15, color: 'black', fontWeight: 'bold' }}
                 >
-                  {user.firstName} {user.lastName}
+                  {owner.firstName} {owner.lastName}
                 </Text>
               }
-              <Text style={{ fontSize: 11, color: constants.GREY_COLOR, fontWeight: 'bold' }}>Owner</Text>
+              <Text style={{ fontSize: 11, color: 'black' }}>Owner</Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row' }}>
@@ -304,13 +301,13 @@ const ListingDetailScreen = ({ navigation }) => {
               activeOpacity={0.5}
               style={[styles.contactButton, { marginRight: 15 }]}
             >
-              <AntDesign name='message1' size={24} color='#bcbcbc' />
+              <AntDesign name='message1' size={24} color={constants.MAIN_COLOR} />
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.contactButton}
             >
-              <Ionicons name='call' size={24} color='#bcbcbc' />
+              <Ionicons name='call' size={24} color={constants.MAIN_COLOR} />
             </TouchableOpacity>
           </View>
         </View>
@@ -425,7 +422,7 @@ const styles = StyleSheet.create({
     width: 40,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#eeeeee',
+    borderColor: constants.MAIN_COLOR,
     justifyContent: 'center',
     alignItems: 'center'
   },

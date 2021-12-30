@@ -15,13 +15,16 @@ const ChatScreen = ({ navigation }) => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const response = await realEstateApi.get(`/messages/${conversation._id}`);
+        const response = await realEstateApi.get(`/messages/${conversation?._id}`);
         setMessages(response.data);
       } catch (error) {
         console.log(error);
       }
     };
-    getMessages();
+
+    if (conversation) {
+      getMessages();
+    }
   }, [conversation]);
 
   const onSend = message => {
