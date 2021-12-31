@@ -48,8 +48,8 @@ const Conversation = ({ conversation, friend, currentUser }) => {
           numberOfLines={1}
           ellipsizeMode='tail'
         >
-          {messages[0]?.senderId === friend._id ? `${friend.firstName}: ` : 'You: '}
-          {messages[0]?.text}
+          {messages[0]?.senderId._id === friend._id ? `${friend.firstName}: ` : 'You: '}
+          {messages[0]?.text ? messages[0]?.text : 'sent an image.'}
         </Text>
       </View>
     </View>

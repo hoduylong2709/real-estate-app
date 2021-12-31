@@ -4,6 +4,7 @@ import { GiftedChat, Send, Actions, Bubble, InputToolbar } from 'react-native-gi
 import { FontAwesome, Feather, AntDesign, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import realEstateApi from '../api/realEstate';
+import axios from 'axios';
 import * as constants from '../constants';
 import { messageIdGenerator } from '../utils/generateUuid';
 
@@ -27,8 +28,37 @@ const ChatScreen = ({ navigation }) => {
     }
   }, [conversation]);
 
-  const onSend = message => {
-    setMessages(prev => [...message, ...prev]);
+  const onSend = async messages => {
+    setMessages(prev => [...messages, ...prev]);
+
+    let imageUrl = '';
+
+    if (messages[0].image) {
+      const formData = new FormData();
+      const file = {
+        name: 'user_listing.jpg',
+        uri: messages[0].image,
+        type: 'image/jpg'
+      };
+
+      formData.append('file', file);
+      formData.append('upload_preset', '_RealEstate');
+      formData.append('cloud_name', 'longhoduy');
+      formData.append('folder', 'Messages');
+
+      const response = await axios.post('https://api.cloudinary.com/v1_1/longhoduy/image/upload', formData);
+      imageUrl = response.data.url;
+    }
+
+    const messageToUpload = {
+      conversationId: conversation._id,
+      senderId: messages[0]['user']._id,
+      text: messages[0].text ? messages[0].text : '',
+      image: messages[0].image ? imageUrl : '',
+      video: messages[0].video ? messages[0].video : ''
+    };
+
+    await realEstateApi.post('/messages', messageToUpload);
   };
 
   const pickImage = async () => {
@@ -44,7 +74,7 @@ const ChatScreen = ({ navigation }) => {
         });
 
         if (!result.cancelled) {
-          const message = [{
+          const messages = [{
             _id: messageIdGenerator(),
             createdAt: new Date(),
             user: {
@@ -55,7 +85,7 @@ const ChatScreen = ({ navigation }) => {
             image: result.uri,
           }];
 
-          onSend(message);
+          onSend(messages);
         }
       }
     }
@@ -144,7 +174,7 @@ const ChatScreen = ({ navigation }) => {
         renderSend={props => renderSend(props)}
         renderActions={props => renderActions(props)}
         renderInputToolbar={props => renderInputToolbar(props)}
-        onSend={message => onSend(message)}
+        onSend={messages => onSend(messages)}
         user={{
           _id: currentUser._id,
           name: `${currentUser.firstName} ${currentUser.lastName}`,
