@@ -11,6 +11,7 @@ import { messageIdGenerator } from '../utils/generateUuid';
 const ChatScreen = ({ navigation }) => {
   const currentUser = navigation.getParam('currentUser');
   const conversation = navigation.getParam('conversation');
+  const friend = navigation.getParam('friend');
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const ChatScreen = ({ navigation }) => {
     setMessages(prev => [...messages, ...prev]);
 
     let imageUrl = '';
+    let messageToUpload = null;
 
     if (messages[0].image) {
       const formData = new FormData();
@@ -50,13 +52,28 @@ const ChatScreen = ({ navigation }) => {
       imageUrl = response.data.url;
     }
 
-    const messageToUpload = {
-      conversationId: conversation._id,
-      senderId: messages[0]['user']._id,
-      text: messages[0].text ? messages[0].text : '',
-      image: messages[0].image ? imageUrl : '',
-      video: messages[0].video ? messages[0].video : ''
-    };
+    if (!conversation) {
+      const response = await realEstateApi.post('/conversations', {
+        senderId: currentUser._id,
+        receiverId: friend._id
+      });
+
+      messageToUpload = {
+        conversationId: response.data._id,
+        senderId: messages[0]['user']._id,
+        text: messages[0].text ? messages[0].text : '',
+        image: messages[0].image ? imageUrl : '',
+        video: messages[0].video ? messages[0].video : ''
+      };
+    } else {
+      messageToUpload = {
+        conversationId: conversation._id,
+        senderId: messages[0]['user']._id,
+        text: messages[0].text ? messages[0].text : '',
+        image: messages[0].image ? imageUrl : '',
+        video: messages[0].video ? messages[0].video : ''
+      };
+    }
 
     await realEstateApi.post('/messages', messageToUpload);
   };
