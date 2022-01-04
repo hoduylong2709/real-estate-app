@@ -54,7 +54,6 @@ const ChatScreen = ({ navigation }) => {
 
     if (!conversation) {
       const response = await realEstateApi.post('/conversations', {
-        senderId: currentUser._id,
         receiverId: friend._id
       });
 

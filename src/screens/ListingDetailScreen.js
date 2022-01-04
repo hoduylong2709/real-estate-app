@@ -22,7 +22,7 @@ const ListingDetailScreen = ({ navigation }) => {
   const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
   const [currentUser, setCurrentUser] = useState(null);
   const { state: { ratings }, fetchRatings } = useContext(RatingContext);
-  const { state, fetchConversations } = useContext(ConversationContext);
+  const { state: { conversations }, fetchConversations } = useContext(ConversationContext);
   const refRBSheet = useRef();
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
 
@@ -314,7 +314,7 @@ const ListingDetailScreen = ({ navigation }) => {
                 navigation.navigate('Chat', {
                   friend: owner,
                   currentUser,
-                  conversation: state.find(
+                  conversation: conversations.find(
                     conversation => (conversation.members[0]._id === owner._id || conversation.members[0]._id === currentUser._id) &&
                       (conversation.members[1]._id === owner._id || conversation.members[1]._id === currentUser._id)
                   )
