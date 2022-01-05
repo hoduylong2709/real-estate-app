@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, FlatList, Dimensions, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationEvents } from 'react-navigation';
@@ -6,6 +6,8 @@ import { Swipeable } from 'react-native-gesture-handler';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { FontAwesome } from '@expo/vector-icons';
+import { io } from 'socket.io-client';
+import { SERVER_URL } from '@env';
 import Conversation from '../components/Conversation';
 import RenderRight from '../components/RenderRight';
 import { Context as ConversationContext } from '../context/ConversationContext';
@@ -16,6 +18,11 @@ const MessagesScreen = ({ navigation }) => {
   const [isConfirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const [selectedConvId, setSelectedConvId] = useState('');
   const { state: { conversations, loading }, fetchConversations, deleteConversation } = useContext(ConversationContext);
+  const socket = useRef();
+
+  useEffect(() => {
+    socket.current = io(`${SERVER_URL}`);
+  }, []);
 
   const handlePressTrashIcon = convId => {
     setSelectedConvId(convId);

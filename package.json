@@ -25,6 +25,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-awesome-alerts": "^1.5.2",
     "react-native-currency-input": "^1.0.1",
+    "react-native-dotenv": "^3.3.1",
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-gifted-chat": "^0.16.3",
@@ -46,6 +47,7 @@
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4",
     "react-navigation-tabs": "^2.11.1",
+    "socket.io-client": "^4.4.0",
     "yup": "^0.32.9"
   },
   "devDependencies": {
