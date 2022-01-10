@@ -7,12 +7,24 @@ import realEstateApi from '../api/realEstate';
 import axios from 'axios';
 import * as constants from '../constants';
 import { messageIdGenerator } from '../utils/generateUuid';
+import socket from '../../socket';
 
 const ChatScreen = ({ navigation }) => {
   const currentUser = navigation.getParam('currentUser');
   const conversation = navigation.getParam('conversation');
   const friend = navigation.getParam('friend');
   const [messages, setMessages] = useState([]);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+
+  useEffect(() => {
+    socket.on('getMessage', message => {
+      setArrivalMessage(message);
+    });
+  }, []);
+
+  useEffect(() => {
+    arrivalMessage && setMessages(prev => [arrivalMessage, ...prev]);
+  }, [arrivalMessage]);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -72,6 +84,14 @@ const ChatScreen = ({ navigation }) => {
         image: messages[0].image ? imageUrl : '',
         video: messages[0].video ? messages[0].video : ''
       };
+    }
+
+    if (messages[0].image) {
+      socket.emit('sendMessage', { ...messages[0], receiverId: friend._id, image: imageUrl });
+    } else if (messages[0].video) {
+      console.log('Emit sendMessage event with video');
+    } else {
+      socket.emit('sendMessage', { ...messages[0], receiverId: friend._id });
     }
 
     await realEstateApi.post('/messages', messageToUpload);

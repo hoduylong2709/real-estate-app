@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, FlatList, Dimensions, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationEvents } from 'react-navigation';
@@ -6,22 +6,24 @@ import { Swipeable } from 'react-native-gesture-handler';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { FontAwesome } from '@expo/vector-icons';
-import { io } from 'socket.io-client';
-import { SERVER_URL } from '@env';
 import Conversation from '../components/Conversation';
 import RenderRight from '../components/RenderRight';
 import { Context as ConversationContext } from '../context/ConversationContext';
+import socket from '../../socket';
 const { width } = Dimensions.get('screen');
 
 const MessagesScreen = ({ navigation }) => {
   const [userObj, setUserObj] = useState(null);
   const [isConfirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const [selectedConvId, setSelectedConvId] = useState('');
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const { state: { conversations, loading }, fetchConversations, deleteConversation } = useContext(ConversationContext);
-  const socket = useRef();
 
   useEffect(() => {
-    socket.current = io(`${SERVER_URL}`);
+    socket.emit('getUsers');
+    socket.on('getUsers', users => {
+      setOnlineUsers(users);
+    });
   }, []);
 
   const handlePressTrashIcon = convId => {
@@ -78,6 +80,7 @@ const MessagesScreen = ({ navigation }) => {
                       conversation={item}
                       friend={item.members.find(member => member._id !== userObj._id)}
                       currentUser={userObj}
+                      onlineUsers={onlineUsers}
                     />
                   </TouchableOpacity>
                 </Swipeable>

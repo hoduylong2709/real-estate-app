@@ -8,6 +8,7 @@ import { Context as ListingContext } from '../context/ListingContext';
 import Spacer from './../components/Spacer';
 import CategoryCard from '../components/CategoryCard';
 import ListingCard from '../components/ListingCard';
+import socket from '../../socket';
 
 const HomeScreen = ({ navigation }) => {
   const { fetchCategories, state: { categories, categoryLoading } } = useContext(CategoryContext);
@@ -16,6 +17,8 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     fetchCategories();
+    socket.connect();
+    socket.emit('addUser', userId);
   }, []);
 
   const checkFavorite = listing => {

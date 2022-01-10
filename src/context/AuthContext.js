@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import createDataContext from './createDataContext';
 import realEstateApi from '../api/realEstate';
 import { navigate } from '../navigationRef';
+import socket from '../../socket';
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -98,6 +99,7 @@ const logout = dispatch => async () => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('userInfo');
     dispatch({ type: 'logout' });
+    socket.disconnect();
     navigate('loginFlow');
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'Cannot log out the user!' });
