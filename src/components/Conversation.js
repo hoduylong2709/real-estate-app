@@ -1,37 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import realEstateApi from '../api/realEstate';
 import moment from 'moment';
 
-const Conversation = ({ conversation, friend, currentUser, onlineUsers }) => {
-  const [messages, setMessages] = useState([]);
+const Conversation = ({ friend, onlineUsers, lastMessage, currentUser }) => {
   const [isOnline, setIsOnline] = useState(false);
 
   useEffect(() => {
-    setIsOnline(
-      onlineUsers.some(onlineUser => onlineUser.userId === friend._id)
-    );
+    let isMounted = true;
+    if (isMounted) {
+      setIsOnline(
+        onlineUsers.some(onlineUser => onlineUser.userId === friend._id)
+      );
+    }
+    return () => { isMounted = false };
   }, [onlineUsers]);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const getMessages = async () => {
-      try {
-        const response = await realEstateApi.get(`/messages/${conversation._id}`);
-        if (mounted) {
-          setMessages(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getMessages();
-
-    return () => mounted = false;
-  }, [currentUser, conversation]);
 
   return (
     <View style={styles.container}>
@@ -45,18 +28,18 @@ const Conversation = ({ conversation, friend, currentUser, onlineUsers }) => {
       </View>
       <View style={styles.conversationInfo}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{friend.firstName} {friend.lastName}</Text>
-          <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'gray' }}>
-            {moment(messages[0]?.createdAt).format('DD/MM/yyyy')}
+          <Text style={lastMessage.isRead || lastMessage.senderId === currentUser._id ? { fontSize: 18, color: 'gray' } : { fontSize: 18, fontWeight: 'bold', color: 'black' }}>{friend.firstName} {friend.lastName}</Text>
+          <Text style={lastMessage.isRead || lastMessage.senderId === currentUser._id ? { fontSize: 10, fontWeight: 'bold', color: 'gray' } : { fontSize: 10, fontWeight: 'bold', color: 'black' }}>
+            {moment(lastMessage?.createdAt).format('DD/MM/yyyy')}
           </Text>
         </View>
         <Text
-          style={{ fontSize: 13, color: 'gray' }}
+          style={lastMessage.isRead || lastMessage.senderId === currentUser._id ? { fontSize: 13, color: 'gray' } : { fontSize: 14, color: 'black', fontWeight: 'bold' }}
           numberOfLines={1}
           ellipsizeMode='tail'
         >
-          {messages[0]?.senderId._id === friend._id ? `${friend.firstName}: ` : 'You: '}
-          {messages[0]?.text ? messages[0]?.text : 'sent an image.'}
+          {lastMessage?.senderId === friend._id ? `${friend.firstName}: ` : 'You: '}
+          {lastMessage?.text ? lastMessage?.text : 'sent an image.'}
         </Text>
       </View>
     </View>

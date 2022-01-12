@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image, ToastAndroid } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +12,7 @@ import { Context as RatingContext } from '../context/RatingContext';
 import { Context as ConversationContext } from '../context/ConversationContext';
 import { countAverageStars } from '../utils/countAverageStars';
 import RatingCard from '../components/RatingCard';
+import socket from '../../socket';
 const { width } = Dimensions.get('screen');
 
 const ListingDetailScreen = ({ navigation }) => {
@@ -21,10 +22,22 @@ const ListingDetailScreen = ({ navigation }) => {
   const [lengthMore, setLengthMore] = useState(false); // To show "see more" or "see less"
   const [selectedPhoto, setSelectedPhoto] = useState(photos[0].imageUrl);
   const [currentUser, setCurrentUser] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const { state: { ratings }, fetchRatings } = useContext(RatingContext);
   const { state: { conversations }, fetchConversations } = useContext(ConversationContext);
   const refRBSheet = useRef();
   const averageStars = countAverageStars(ratings.map(rating => rating.stars));
+
+  useEffect(() => {
+    let isMounted = true;
+    socket.emit('getUsers');
+    socket.on('getUsers', users => {
+      if (isMounted) {
+        setOnlineUsers(users);
+      }
+    });
+    return () => { isMounted = false };
+  }, []);
 
   const toggleNumberOfLines = () => {
     setTextShown(!textShown);
@@ -317,7 +330,8 @@ const ListingDetailScreen = ({ navigation }) => {
                   conversation: conversations.find(
                     conversation => (conversation.members[0]._id === owner._id || conversation.members[0]._id === currentUser._id) &&
                       (conversation.members[1]._id === owner._id || conversation.members[1]._id === currentUser._id)
-                  )
+                  ),
+                  onlineUsers
                 });
                 refRBSheet.current.close();
               }}

@@ -13,6 +13,7 @@ const ChatScreen = ({ navigation }) => {
   const currentUser = navigation.getParam('currentUser');
   const conversation = navigation.getParam('conversation');
   const friend = navigation.getParam('friend');
+  const onlineUsers = navigation.getParam('onlineUsers');
   const [messages, setMessages] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
 
@@ -31,6 +32,11 @@ const ChatScreen = ({ navigation }) => {
       try {
         const response = await realEstateApi.get(`/messages/${conversation?._id}`);
         setMessages(response.data);
+
+        const friendMessage = response.data.filter(message => message.senderId._id !== currentUser._id);
+        for (let i = 0; i < friendMessage.length; i++) {
+          await realEstateApi.patch(`/messages/read/${friendMessage[i]._id}`);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -86,12 +92,14 @@ const ChatScreen = ({ navigation }) => {
       };
     }
 
-    if (messages[0].image) {
-      socket.emit('sendMessage', { ...messages[0], receiverId: friend._id, image: imageUrl });
-    } else if (messages[0].video) {
-      console.log('Emit sendMessage event with video');
-    } else {
-      socket.emit('sendMessage', { ...messages[0], receiverId: friend._id });
+    if (onlineUsers.some(onlineUser => onlineUser.userId === friend._id)) {
+      if (messages[0].image) {
+        socket.emit('sendMessage', { ...messages[0], receiverId: friend._id, image: imageUrl });
+      } else if (messages[0].video) {
+        console.log('Emit sendMessage event with video');
+      } else {
+        socket.emit('sendMessage', { ...messages[0], receiverId: friend._id });
+      }
     }
 
     await realEstateApi.post('/messages', messageToUpload);

@@ -20,10 +20,14 @@ const MessagesScreen = ({ navigation }) => {
   const { state: { conversations, loading }, fetchConversations, deleteConversation } = useContext(ConversationContext);
 
   useEffect(() => {
+    let isMounted = true;
     socket.emit('getUsers');
     socket.on('getUsers', users => {
-      setOnlineUsers(users);
+      if (isMounted) {
+        setOnlineUsers(users);
+      }
     });
+    return () => { isMounted = false };
   }, []);
 
   const handlePressTrashIcon = convId => {
@@ -73,14 +77,15 @@ const MessagesScreen = ({ navigation }) => {
                     onPress={() => navigation.navigate('Chat', {
                       friend: item.members.find(member => member._id !== userObj._id),
                       currentUser: userObj,
-                      conversation: item
+                      conversation: item,
+                      onlineUsers
                     })}
                   >
                     <Conversation
-                      conversation={item}
                       friend={item.members.find(member => member._id !== userObj._id)}
                       currentUser={userObj}
                       onlineUsers={onlineUsers}
+                      lastMessage={item.lastMessage}
                     />
                   </TouchableOpacity>
                 </Swipeable>

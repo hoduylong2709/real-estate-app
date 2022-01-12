@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
 
-const socket = io('https://d8cf-116-98-251-31.ngrok.io', { autoConnect: false });
+const socket = io('http://9102-58-186-134-77.ngrok.io', { autoConnect: false });
 
 export default socket;
