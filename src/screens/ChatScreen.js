@@ -16,10 +16,18 @@ const ChatScreen = ({ navigation }) => {
   const onlineUsers = navigation.getParam('onlineUsers');
   const [messages, setMessages] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
+  const parent = navigation.dangerouslyGetParent();
 
   useEffect(() => {
     socket.on('getMessage', message => {
-      setArrivalMessage(message);
+      if (navigation.isFocused()) {
+        setArrivalMessage(message);
+        const setMessageRead = async clientId => {
+          const response = await realEstateApi.get(`/messages/message/${clientId}`);
+          await realEstateApi.patch(`/messages/read/${response.data._id}`);
+        };
+        setMessageRead(message._id);
+      }
     });
   }, []);
 
@@ -35,7 +43,9 @@ const ChatScreen = ({ navigation }) => {
 
         const friendMessage = response.data.filter(message => message.senderId._id !== currentUser._id);
         for (let i = 0; i < friendMessage.length; i++) {
-          await realEstateApi.patch(`/messages/read/${friendMessage[i]._id}`);
+          if (!friendMessage[i].isRead) {
+            await realEstateApi.patch(`/messages/read/${friendMessage[i]._id}`);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -51,7 +61,6 @@ const ChatScreen = ({ navigation }) => {
     setMessages(prev => [...messages, ...prev]);
 
     let imageUrl = '';
-    let messageToUpload = null;
 
     if (messages[0].image) {
       const formData = new FormData();
@@ -70,35 +79,30 @@ const ChatScreen = ({ navigation }) => {
       imageUrl = response.data.url;
     }
 
+    let messageToUpload = {
+      clientId: messages[0]._id,
+      senderId: messages[0]['user']._id,
+      text: messages[0].text ? messages[0].text : '',
+      image: messages[0].image ? imageUrl : '',
+      video: messages[0].video ? messages[0].video : ''
+    };
+
     if (!conversation) {
       const response = await realEstateApi.post('/conversations', {
         receiverId: friend._id
       });
-
-      messageToUpload = {
-        conversationId: response.data._id,
-        senderId: messages[0]['user']._id,
-        text: messages[0].text ? messages[0].text : '',
-        image: messages[0].image ? imageUrl : '',
-        video: messages[0].video ? messages[0].video : ''
-      };
+      messageToUpload.conversationId = response.data._id;
     } else {
-      messageToUpload = {
-        conversationId: conversation._id,
-        senderId: messages[0]['user']._id,
-        text: messages[0].text ? messages[0].text : '',
-        image: messages[0].image ? imageUrl : '',
-        video: messages[0].video ? messages[0].video : ''
-      };
+      messageToUpload.conversationId = conversation._id;
     }
 
     if (onlineUsers.some(onlineUser => onlineUser.userId === friend._id)) {
       if (messages[0].image) {
-        socket.emit('sendMessage', { ...messages[0], receiverId: friend._id, image: imageUrl });
+        socket.emit('sendMessage', { ...messages[0], receiverId: friend._id, image: imageUrl, previousRoute: parent.state.routeName });
       } else if (messages[0].video) {
         console.log('Emit sendMessage event with video');
       } else {
-        socket.emit('sendMessage', { ...messages[0], receiverId: friend._id });
+        socket.emit('sendMessage', { ...messages[0], receiverId: friend._id, previousRoute: parent.state.routeName });
       }
     }
 

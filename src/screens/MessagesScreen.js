@@ -17,6 +17,7 @@ const MessagesScreen = ({ navigation }) => {
   const [isConfirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const [selectedConvId, setSelectedConvId] = useState('');
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
   const { state: { conversations, loading }, fetchConversations, deleteConversation } = useContext(ConversationContext);
 
   useEffect(() => {
@@ -25,6 +26,19 @@ const MessagesScreen = ({ navigation }) => {
     socket.on('getUsers', users => {
       if (isMounted) {
         setOnlineUsers(users);
+      }
+    });
+    socket.on('getMessage', message => {
+      if (isMounted) {
+        if (navigation.isFocused()) {
+          setArrivalMessage({ ...message, isRead: false });
+        } else {
+          if (message.previousRoute === 'chatFlow') {
+            setArrivalMessage({ ...message, isRead: true });
+          } else {
+            setArrivalMessage({ ...message, isRead: false });
+          }
+        }
       }
     });
     return () => { isMounted = false };
@@ -74,18 +88,21 @@ const MessagesScreen = ({ navigation }) => {
                   <TouchableOpacity
                     key={item._id}
                     activeOpacity={0.7}
-                    onPress={() => navigation.navigate('Chat', {
-                      friend: item.members.find(member => member._id !== userObj._id),
-                      currentUser: userObj,
-                      conversation: item,
-                      onlineUsers
-                    })}
+                    onPress={() => {
+                      setArrivalMessage(null);
+                      navigation.navigate('Chat', {
+                        friend: item.members.find(member => member._id !== userObj._id),
+                        currentUser: userObj,
+                        conversation: item,
+                        onlineUsers
+                      })
+                    }}
                   >
                     <Conversation
                       friend={item.members.find(member => member._id !== userObj._id)}
                       currentUser={userObj}
                       onlineUsers={onlineUsers}
-                      lastMessage={item.lastMessage}
+                      lastMessage={arrivalMessage ? { ...arrivalMessage, senderId: arrivalMessage.user._id } : item.lastMessage}
                     />
                   </TouchableOpacity>
                 </Swipeable>
