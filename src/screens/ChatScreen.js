@@ -16,7 +16,10 @@ const ChatScreen = ({ navigation }) => {
   const onlineUsers = navigation.getParam('onlineUsers');
   const [messages, setMessages] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
+  const [skip, setSkip] = useState(0);
+  const [noMessage, setNoMessage] = useState(false);
   const parent = navigation.dangerouslyGetParent();
+  const LIMIT = 15;
 
   useEffect(() => {
     socket.on('getMessage', message => {
@@ -38,8 +41,17 @@ const ChatScreen = ({ navigation }) => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const response = await realEstateApi.get(`/messages/${conversation?._id}`);
-        setMessages(response.data);
+        const response = await realEstateApi.get(`/messages/${conversation?._id}?limit=${LIMIT}&skip=${skip}`);
+
+        if (skip === 0) {
+          setMessages(response.data);
+        } else {
+          if (response.data.length !== 0) {
+            setMessages(prev => [...prev, ...response.data]);
+          } else {
+            setNoMessage(true);
+          }
+        }
 
         const friendMessage = response.data.filter(message => message.senderId._id !== currentUser._id);
         for (let i = 0; i < friendMessage.length; i++) {
@@ -55,7 +67,7 @@ const ChatScreen = ({ navigation }) => {
     if (conversation) {
       getMessages();
     }
-  }, [conversation]);
+  }, [conversation, skip]);
 
   const onSend = async messages => {
     setMessages(prev => [...messages, ...prev]);
@@ -228,6 +240,14 @@ const ChatScreen = ({ navigation }) => {
           name: `${currentUser.firstName} ${currentUser.lastName}`,
           avatar: currentUser.avatar
         }}
+        listViewProps={{
+          onEndReached: () => {
+            if (!noMessage) {
+              setSkip(skip + LIMIT);
+            }
+          }
+        }}
+        scrollToBottom={true}
       />
     </View>
   );
