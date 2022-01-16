@@ -16,10 +16,11 @@ const ChatScreen = ({ navigation }) => {
   const onlineUsers = navigation.getParam('onlineUsers');
   const [messages, setMessages] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  const [skip, setSkip] = useState(0);
   const [noMessage, setNoMessage] = useState(false);
+  const [oldestMessage, setOldestMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
   const parent = navigation.dangerouslyGetParent();
-  const LIMIT = 15;
+  const MESSAGE_LIMIT = 15;
 
   useEffect(() => {
     socket.on('getMessage', message => {
@@ -41,17 +42,21 @@ const ChatScreen = ({ navigation }) => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const response = await realEstateApi.get(`/messages/${conversation?._id}?limit=${LIMIT}&skip=${skip}`);
+        let response = null;
+        setLoading(true);
 
-        if (skip === 0) {
+        if (!oldestMessage) {
+          response = await realEstateApi.get(`/messages/${conversation?._id}?limit=${MESSAGE_LIMIT}`);
           setMessages(response.data);
         } else {
+          response = await realEstateApi.get(`/messages/${conversation?._id}?limit=${MESSAGE_LIMIT}&oldest=${oldestMessage._id}`);
           if (response.data.length !== 0) {
             setMessages(prev => [...prev, ...response.data]);
           } else {
             setNoMessage(true);
           }
         }
+        setLoading(false);
 
         const friendMessage = response.data.filter(message => message.senderId._id !== currentUser._id);
         for (let i = 0; i < friendMessage.length; i++) {
@@ -67,7 +72,7 @@ const ChatScreen = ({ navigation }) => {
     if (conversation) {
       getMessages();
     }
-  }, [conversation, skip]);
+  }, [conversation, oldestMessage]);
 
   const onSend = async messages => {
     setMessages(prev => [...messages, ...prev]);
@@ -242,8 +247,8 @@ const ChatScreen = ({ navigation }) => {
         }}
         listViewProps={{
           onEndReached: () => {
-            if (!noMessage) {
-              setSkip(skip + LIMIT);
+            if (!noMessage && !loading) {
+              setOldestMessage(messages[messages.length - 1]);
             }
           }
         }}
