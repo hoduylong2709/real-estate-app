@@ -15,7 +15,7 @@ const AccountDetailScreen = ({ navigation }) => {
     firstName: userObj.firstName,
     lastName: userObj.lastName,
     email: userObj.email,
-    phoneNumber: userObj.phoneNumber.toString() || ''
+    phoneNumber: userObj.phoneNumber?.toString() || ''
   };
 
   return (
