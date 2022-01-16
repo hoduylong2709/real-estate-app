@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image, ToastAndroid } from 'react-native';
+import { StyleSheet, View, ScrollView, ImageBackground, TouchableOpacity, Text, FlatList, Dimensions, Image, ToastAndroid, Linking } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Avatar } from 'react-native-elements';
@@ -65,6 +65,16 @@ const ListingDetailScreen = ({ navigation }) => {
     });
 
     return isExist;
+  };
+
+  const openDialScreen = () => {
+    let number = '';
+    if (Platform.OS === 'android') {
+      number = `tel:$${owner.phoneNumber}`;
+    } else {
+      number = `telprompt:$${owner.phoneNumber}`;
+    }
+    Linking.openURL(number);
   };
 
   return (
@@ -341,6 +351,8 @@ const ListingDetailScreen = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.contactButton}
+              disabled={!owner.phoneNumber}
+              onPress={openDialScreen}
             >
               <Ionicons name='call' size={24} color={constants.MAIN_COLOR} />
             </TouchableOpacity>
