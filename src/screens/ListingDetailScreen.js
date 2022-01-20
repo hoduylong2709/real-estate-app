@@ -305,16 +305,24 @@ const ListingDetailScreen = ({ navigation }) => {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {
-              owner ?
+              owner.avatar ?
                 <Avatar
                   rounded
                   size={50}
                   source={{ uri: owner.avatar }}
+                  onPress={() => {
+                    navigation.navigate('OtherProfile', { owner });
+                    refRBSheet.current.close();
+                  }}
                 /> :
                 <Avatar
                   rounded
                   size={50}
                   source={require('../../assets/user.png')}
+                  onPress={() => {
+                    navigation.navigate('OtherProfile', { owner });
+                    refRBSheet.current.close();
+                  }}
                 />
             }
             <View style={{ paddingHorizontal: 10 }}>

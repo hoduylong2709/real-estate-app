@@ -22,7 +22,7 @@ const Conversation = ({ friend, onlineUsers, lastMessage, currentUser }) => {
         <Avatar
           size={47}
           rounded
-          source={{ uri: friend.avatar }}
+          source={friend.avatar ? { uri: friend.avatar } : require('../../assets/user.png')}
         />
         <View style={isOnline ? styles.onlineIcon : { ...styles.onlineIcon, backgroundColor: '#AEAEAE' }}></View>
       </View>

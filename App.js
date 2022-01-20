@@ -32,6 +32,7 @@ import EditListingScreen from './src/screens/EditListingScreen';
 import MyFavoriteListingScreen from './src/screens/MyFavoriteListingScreen';
 import AccountDetailScreen from './src/screens/AccountDetailScreen';
 import ChatScreen from './src/screens/ChatScreen';
+import OtherProfileScreen from './src/screens/OtherProfileScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -46,6 +47,7 @@ const homeFlow = createStackNavigator({
   Camera: CameraScreen,
   ListingFilters: ListingFiltersScreen,
   ListingDetail: ListingDetailScreen,
+  OtherProfile: OtherProfileScreen,
   Chat: ChatScreen,
   Rating: RatingScreen
 }, {
@@ -63,7 +65,8 @@ homeFlow.navigationOptions = ({ navigation }) => {
     routeName === 'ListingDetail' ||
     routeName === 'Rating' ||
     routeName === 'Camera' ||
-    routeName === 'Chat') {
+    routeName === 'Chat' ||
+    routeName === 'OtherProfile') {
     tabBarVisible = false;
   }
 
@@ -82,6 +85,7 @@ const profileFlow = createStackNavigator({
   Camera: CameraScreen,
   ListingFilters: ListingFiltersScreen,
   ListingDetail: ListingDetailScreen,
+  OtherProfile: OtherProfileScreen,
   Rating: RatingScreen,
   AccountDetail: AccountDetailScreen
 }, {
@@ -100,7 +104,8 @@ profileFlow.navigationOptions = ({ navigation }) => {
     routeName === 'ListingFilters' ||
     routeName === 'Camera' ||
     routeName === 'ListingDetail' ||
-    routeName === 'AccountDetail') {
+    routeName === 'AccountDetail' ||
+    routeName === 'OtherProfile') {
     tabBarVisible = false;
   }
 
