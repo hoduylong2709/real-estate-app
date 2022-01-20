@@ -311,7 +311,7 @@ const ListingDetailScreen = ({ navigation }) => {
                   size={50}
                   source={{ uri: owner.avatar }}
                   onPress={() => {
-                    navigation.navigate('OtherProfile', { owner });
+                    navigation.navigate('OtherProfile', { user: owner });
                     refRBSheet.current.close();
                   }}
                 /> :
@@ -320,7 +320,7 @@ const ListingDetailScreen = ({ navigation }) => {
                   size={50}
                   source={require('../../assets/user.png')}
                   onPress={() => {
-                    navigation.navigate('OtherProfile', { owner });
+                    navigation.navigate('OtherProfile', { user: owner });
                     refRBSheet.current.close();
                   }}
                 />

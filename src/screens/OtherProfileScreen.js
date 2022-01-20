@@ -9,7 +9,7 @@ import realEstateApi from '../api/realEstate';
 const { width } = Dimensions.get('screen');
 
 const OtherProfileScreen = ({ navigation }) => {
-  const owner = navigation.getParam('owner');
+  const user = navigation.getParam('user');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [numberOfListings, setNumberOfListings] = useState(0);
   const [list, setList] = useState([]);
@@ -20,10 +20,10 @@ const OtherProfileScreen = ({ navigation }) => {
     setLoading(true);
 
     if (index == 0) {
-      apiEndpoint = `/listings/${owner._id}`;
+      apiEndpoint = `/listings/${user._id}`;
     }
     if (index === 1) {
-      apiEndpoint = `/listings/favorite/${owner._id}`;
+      apiEndpoint = `/listings/favorite/${user._id}`;
     }
     if (index === 2) {
       // apiEndPoint for get sold listings
@@ -40,7 +40,7 @@ const OtherProfileScreen = ({ navigation }) => {
         onWillFocus={() => {
           (async () => {
             setLoading(true);
-            const response = await realEstateApi.get(`/listings/${owner._id}`);
+            const response = await realEstateApi.get(`/listings/${user._id}`);
             setNumberOfListings(response.data.length);
             setLoading(false);
             setList(response.data);
@@ -52,13 +52,13 @@ const OtherProfileScreen = ({ navigation }) => {
           <Avatar
             rounded
             size={80}
-            source={owner.avatar ? { uri: owner.avatar } : require('../../assets/user.png')}
+            source={user.avatar ? { uri: user.avatar } : require('../../assets/user.png')}
           />
         </View>
         <View style={styles.infoContainer}>
-          <Text style={{ fontSize: 28, color: '#52575D', fontWeight: 'bold' }}>{owner.firstName} {owner.lastName}</Text>
-          <Text style={{ fontSize: 13, color: '#AEB5BC', fontWeight: 'bold' }}>{owner.email}</Text>
-          <Text style={{ fontSize: 13, color: '#AEB5BC', fontWeight: 'bold' }}>{owner.phoneNumber?.toString() || ''}</Text>
+          <Text style={{ fontSize: 28, color: '#52575D', fontWeight: 'bold' }}>{user.firstName} {user.lastName}</Text>
+          <Text style={{ fontSize: 13, color: '#AEB5BC', fontWeight: 'bold' }}>{user.email}</Text>
+          <Text style={{ fontSize: 13, color: '#AEB5BC', fontWeight: 'bold' }}>{user.phoneNumber?.toString() || ''}</Text>
         </View>
       </View>
 
@@ -69,7 +69,7 @@ const OtherProfileScreen = ({ navigation }) => {
         </View>
         <View style={{ height: '70%', width: 3, backgroundColor: '#DFD8C8' }}></View>
         <View style={styles.statsBox}>
-          <Text style={styles.number}>{owner.favoriteListings.length.toString()}</Text>
+          <Text style={styles.number}>{user.favoriteListings.length.toString()}</Text>
           <Text style={styles.subText}>Favorites</Text>
         </View>
         <View style={{ height: '70%', width: 3, backgroundColor: '#DFD8C8' }}></View>

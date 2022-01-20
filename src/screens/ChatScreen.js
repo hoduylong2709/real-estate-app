@@ -253,6 +253,7 @@ const ChatScreen = ({ navigation }) => {
           }
         }}
         scrollToBottom={true}
+        onPressAvatar={() => navigation.navigate('OtherProfile', { user: friend })}
       />
     </View>
   );
