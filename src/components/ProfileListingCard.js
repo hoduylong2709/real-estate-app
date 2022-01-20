@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions, Image } from 'react-native';
+import * as constants from '../constants';
 const { width } = Dimensions.get('screen');
 
 const ProfileListingCard = ({ listing }) => {
@@ -24,6 +25,9 @@ const ProfileListingCard = ({ listing }) => {
           >
             {listing.location.address}
           </Text>
+          <Text style={{ fontSize: 15, fontWeight: 'bold', color: constants.MAIN_COLOR }}>
+            {listing.price.value}{listing.price.currency === 'USA' ? '$' : 'VNĐ'}
+          </Text>
         </View>
       </View>
     </View>
@@ -47,7 +51,8 @@ const styles = StyleSheet.create({
     width: 210,
     height: '70%',
     justifyContent: 'space-evenly',
-    paddingLeft: 10
+    paddingLeft: 10,
+    height: '100%'
   }
 });
 
