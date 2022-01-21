@@ -105,17 +105,12 @@ HomeScreen.navigationOptions = ({ navigation }) => {
       </TouchableOpacity>
     ),
     headerRight: () => (
-      <View style={styles.headerRight}>
+      <View style={{ marginRight: 15 }}>
         <TouchableOpacity
           activeOpacity={0.5}
           onPress={() => navigation.navigate('AddListing')}
         >
-          <MaterialIcons name="post-add" size={26} color={constants.MAIN_COLOR} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.5}
-        >
-          <MaterialIcons name="map" size={26} color={constants.MAIN_COLOR} />
+          <MaterialIcons name='add-business' size={32} color={constants.MAIN_COLOR} />
         </TouchableOpacity>
       </View>
     ),
@@ -129,12 +124,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white'
-  },
-  headerRight: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: 60,
-    marginRight: 15
   },
   title: {
     color: '#A6A6A6',
