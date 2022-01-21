@@ -224,7 +224,7 @@ const ChatScreen = ({ navigation }) => {
                 user: {
                   _id: message.senderId?._id,
                   name: `${message.senderId?.firstName} ${message.senderId?.lastName}`,
-                  avatar: message.senderId?.avatar
+                  avatar: message.senderId?.avatar || require('../../assets/user.png')
                 }
               };
             } else {
@@ -243,7 +243,7 @@ const ChatScreen = ({ navigation }) => {
         user={{
           _id: currentUser._id,
           name: `${currentUser.firstName} ${currentUser.lastName}`,
-          avatar: currentUser.avatar
+          avatar: currentUser.avatar || require('../../assets/user.png')
         }}
         listViewProps={{
           onEndReached: () => {

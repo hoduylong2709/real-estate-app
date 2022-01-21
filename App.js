@@ -118,7 +118,8 @@ profileFlow.navigationOptions = ({ navigation }) => {
 
 const chatFlow = createStackNavigator({
   Messages: MessagesScreen,
-  Chat: ChatScreen
+  Chat: ChatScreen,
+  OtherProfile: OtherProfileScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
@@ -129,7 +130,7 @@ chatFlow.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName === 'Chat') {
+  if (routeName === 'Chat' || routeName === 'OtherProfile') {
     tabBarVisible = false;
   }
 
