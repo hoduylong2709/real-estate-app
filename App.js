@@ -2,7 +2,7 @@ import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { FontAwesome, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import { setNavigator } from './src/navigationRef';
 import * as constants from './src/constants';
 import { Provider as OnboardProvider } from './src/context/OnboardContext';
@@ -18,7 +18,7 @@ import WelcomeScreen from './src/screens/WelcomeScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import VerifyScreen from './src/screens/VerifyScreen';
 import HomeScreen from './src/screens/HomeScreen';
-import CategoriesScreen from './src/screens/CategoriesScreen';
+import SearchScreen from './src/screens/SearchScreen';
 import MessagesScreen from './src/screens/MessagesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AddListingScreen from './src/screens/AddListingScreen';
@@ -33,6 +33,7 @@ import MyFavoriteListingScreen from './src/screens/MyFavoriteListingScreen';
 import AccountDetailScreen from './src/screens/AccountDetailScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import OtherProfileScreen from './src/screens/OtherProfileScreen';
+import MapListingScreen from './src/screens/MapListingScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -141,9 +142,41 @@ chatFlow.navigationOptions = ({ navigation }) => {
   };
 };
 
+const searchFlow = createStackNavigator({
+  Search: SearchScreen,
+  ListingDetail: ListingDetailScreen,
+  OtherProfile: OtherProfileScreen,
+  MapListing: MapListingScreen,
+  Chat: ChatScreen,
+  Rating: RatingScreen,
+}, {
+  defaultNavigationOptions: {
+    headerTitleAlign: 'center'
+  }
+});
+
+searchFlow.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+  if (routeName === 'ListingDetail' ||
+    routeName === 'OtherProfile' ||
+    routeName === 'MapListing' ||
+    routeName === 'Chat' ||
+    routeName === 'Rating') {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarLabel: () => { return null },
+    tabBarIcon: ({ focused }) => <Ionicons name='filter-sharp' size={constants.TAB_BAR_ICON_SIZE} color={focused ? constants.MAIN_COLOR : 'grey'} />,
+    tabBarVisible
+  };
+};
+
 const mainFlow = createBottomTabNavigator({
   homeFlow,
-  Categories: CategoriesScreen,
+  searchFlow,
   chatFlow,
   profileFlow
 });

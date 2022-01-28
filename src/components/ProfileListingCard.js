@@ -3,9 +3,9 @@ import { StyleSheet, Text, View, Dimensions, Image } from 'react-native';
 import * as constants from '../constants';
 const { width } = Dimensions.get('screen');
 
-const ProfileListingCard = ({ listing }) => {
+const ProfileListingCard = ({ listing, horizontal }) => {
   return (
-    <View style={{ marginBottom: 20, marginHorizontal: 10 }}>
+    <View style={!horizontal ? { marginBottom: 20, marginHorizontal: 10 } : { marginBottom: 20 }}>
       <View style={styles.card}>
         <Image
           source={{ uri: listing.photos[0].imageUrl }}

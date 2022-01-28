@@ -98,7 +98,7 @@ const OtherProfileScreen = ({ navigation }) => {
           <FlatList
             data={list}
             keyExtractor={item => item._id}
-            renderItem={({ item }) => <ProfileListingCard listing={item} navigation={navigation} />}
+            renderItem={({ item }) => <ProfileListingCard listing={item} horizontal={false} />}
             contentContainerStyle={{ marginTop: 15 }}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={<Text style={{ fontSize: 14, color: '#AEB5BC' }}>No listings found.</Text>}
