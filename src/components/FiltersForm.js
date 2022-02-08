@@ -296,6 +296,7 @@ const FiltersForm = ({ filters, title, description, priceValue, location, catego
                 onConfirm={handleDateConfirm}
                 onCancel={() => setDatePickerVisibility(false)}
                 style={{ backgroundColor: constants.MAIN_COLOR }}
+                maximumDate={new Date()}
               />
             </View>
             <View style={styles.seperate} />
