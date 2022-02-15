@@ -37,7 +37,10 @@ const SearchScreen = ({ navigation }) => {
   const [filters, setFilters] = useState([]);
   const { state: { categories } } = useContext(CategoryContext);
   const refRBSheet = useRef();
-  const LISTING_LIMIT = 1;
+  const LISTING_LIMIT = 2;
+  const [queryString, setQueryString] = useState('');
+
+  const API_ENDPOINT = `/listings?limit=${LISTING_LIMIT}&skip=${skip}`;
 
   const checkFavorite = listing => {
     return listing.favoriteUsers.includes(userObj?._id);
@@ -76,9 +79,58 @@ const SearchScreen = ({ navigation }) => {
     setIsClosePublicTransportation('');
   };
 
+  const handleCloseBottomSheet = () => {
+    let queryStr = '';
+
+    if (type) {
+      queryStr = queryStr + `&rentOrBuy=${type}`;
+    }
+
+    if (category) {
+      queryStr = queryStr + `&categoryName=${category}`;
+    }
+
+    if (bedrooms) {
+      queryStr = queryStr + `&bedrooms=${bedrooms}`;
+    }
+
+    if (isNewConstruction) {
+      const queryEle = isNewConstruction === 'Yes' ? '&newConstruction=true' : '&newConstruction=false';;
+      queryStr = queryStr + queryEle;
+    }
+
+    if (date) {
+      queryStr = queryStr + `&yearBuilt=${date}`;
+    }
+
+    if (isClosePublicTransportation) {
+      const queryEle = isClosePublicTransportation === 'Yes' ? '&closeToPublicTransportation=true' : '&closeToPublicTransportation=false';
+      queryStr = queryStr + queryEle;
+    }
+
+    if (bathrooms) {
+      queryStr = queryStr + `&baths=${bathrooms}`;
+    }
+
+    if (squareFeet) {
+      queryStr = queryStr + `&squareFeet=${squareFeet}`;
+    }
+
+    setNoListing(false);
+    setListings([]);
+    setFilterListings([]);
+    setQueryString(queryStr);
+    setSkip(0);
+  };
+
   useEffect(() => {
     (async () => {
-      const response = await realEstateApi.get(`/listings?limit=${LISTING_LIMIT}&skip=${skip}`);
+      let response = null;
+      if (queryString) {
+        response = await realEstateApi.get(API_ENDPOINT + queryString);
+      } else {
+        response = await realEstateApi.get(API_ENDPOINT);
+      }
       if (response.data.length !== 0) {
         setListings(prev => [...prev, ...response.data]);
         setFilterListings(prev => [...prev, ...response.data]);
@@ -86,7 +138,7 @@ const SearchScreen = ({ navigation }) => {
         setNoListing(true);
       }
     })();
-  }, [skip]);
+  }, [skip, queryString]);
 
   return (
     <View style={styles.container}>
@@ -232,6 +284,7 @@ const SearchScreen = ({ navigation }) => {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
+        onClose={handleCloseBottomSheet}
         dragFromTopOnly
         customStyles={{
           draggableIcon: {
@@ -270,33 +323,6 @@ const SearchScreen = ({ navigation }) => {
                 />
               ))}
             </View>
-          </View>
-          {/* Rating */}
-          <View style={{ ...styles.optionContainer, marginTop: 20 }}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Rating</Text>
-            <FlatList
-              data={filterData.RATING_DATA}
-              keyExtractor={item => item.key.toString()}
-              renderItem={({ item }) => (
-                <Button
-                  title={item.label}
-                  icon={<AntDesign name='staro' size={15} color={star === item.label ? 'white' : '#808080'} style={{ marginLeft: 5 }} />}
-                  iconRight
-                  containerStyle={styles.buttonOption}
-                  buttonStyle={star === item.label ? { ...styles.button, backgroundColor: constants.MAIN_COLOR, borderColor: 'white' } : styles.button}
-                  titleStyle={star === item.label ? styles.title_focused : styles.title_not_focused}
-                  onPress={() => {
-                    if (star === item.label) {
-                      setStar('');
-                    } else {
-                      setStar(item.label);
-                    }
-                  }}
-                />
-              )}
-              horizontal
-              contentContainerStyle={{ marginTop: 10 }}
-            />
           </View>
           {/* Categories */}
           <View style={{ ...styles.optionContainer, marginTop: 20 }}>

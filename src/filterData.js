@@ -21,14 +21,6 @@ export const CLOSE_TO_PUBLIC_PLACES_DATA = [
   { key: 2, label: 'No' }
 ];
 
-export const RATING_DATA = [
-  { key: 1, label: '1' },
-  { key: 2, label: '2' },
-  { key: 3, label: '3' },
-  { key: 4, label: '4' },
-  { key: 5, label: '5' }
-];
-
 export const BEDROOMS_DATA = [
   { key: 1, label: '1' },
   { key: 2, label: '2' },
