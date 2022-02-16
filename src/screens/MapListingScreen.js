@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
+import { FontAwesome5 } from '@expo/vector-icons';
 import ProfileListingCard from '../components/ProfileListingCard';
 import * as constants from '../constants';
 const { width } = Dimensions.get('screen');
@@ -51,9 +52,10 @@ const MapListingScreen = ({ navigation }) => {
             key={marker.key}
             coordinate={marker.coordinates}
           >
-            <Callout>
-              <Text style={{ fontWeight: 'bold' }}>{marker.title}</Text>
-            </Callout>
+            <View style={{ alignItems: 'center' }}>
+              <Text style={styles.titleMarker}>{marker.title}</Text>
+              <FontAwesome5 name='map-marker-alt' size={32} color='red' />
+            </View>
           </Marker>
         ))}
       </MapView>
@@ -114,6 +116,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderWidth: 1
+  },
+  titleMarker: {
+    fontWeight: 'bold',
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderWidth: 1,
+    borderRadius: 7,
+    backgroundColor: 'white',
+    borderColor: '#C5C5C5'
   }
 });
 
