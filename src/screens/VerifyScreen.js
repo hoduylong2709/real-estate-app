@@ -11,9 +11,11 @@ import ErrorModal from '../components/ErrorModal';
 
 const VerifyScreen = ({ navigation }) => {
   const [otp, setOtp] = useState(null);
-  const { verify, clearErrorMessage, state: { loading, errorMessage } } = useContext(AuthContext);
+  const { verify, clearErrorMessage, state: { loading, errorMessage }, verifyForgotPassword } = useContext(AuthContext);
 
   const id = navigation.getParam('id');
+  const isForgotPassword = navigation.getParam('isForgotPassword');
+  const email = navigation.getParam('email');
 
   return (
     <View style={styles.container}>
@@ -38,7 +40,13 @@ const VerifyScreen = ({ navigation }) => {
       <Button
         title='Verify'
         buttonStyle={styles.button}
-        onPress={() => verify(id, otp)}
+        onPress={() => {
+          if (isForgotPassword) {
+            verifyForgotPassword(email, otp);
+          } else {
+            verify(id, otp);
+          }
+        }}
       />
       <Spinner
         visible={loading}

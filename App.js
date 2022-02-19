@@ -35,13 +35,15 @@ import ChatScreen from './src/screens/ChatScreen';
 import OtherProfileScreen from './src/screens/OtherProfileScreen';
 import MapListingScreen from './src/screens/MapListingScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
+import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
   Login: LoginScreen,
   Signup: SignupScreen,
   Verify: VerifyScreen,
-  ForgotPassword: ForgotPasswordScreen
+  ForgotPassword: ForgotPasswordScreen,
+  ChangePassword: ChangePasswordScreen
 });
 
 const homeFlow = createStackNavigator({

@@ -113,9 +113,20 @@ const forgotPassword = dispatch => async email => {
   try {
     await realEstateApi.post('/users/forgot-password', { email });
     dispatch({ type: 'auth_end' });
-    navigate('Verify');
+    navigate('Verify', { isForgotPassword: true, email });
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'Email not yet registered in system database!' });
+  }
+};
+
+const verifyForgotPassword = dispatch => async (email, verifyCode) => {
+  dispatch({ type: 'auth_start' });
+  try {
+    await realEstateApi.post('/users/forgot-password/verify', { email, verifyCode });
+    dispatch({ type: 'auth_end' });
+    navigate('ChangePassword');
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'The verify code is incorrect!' });
   }
 };
 
@@ -125,6 +136,16 @@ const clearErrorMessage = dispatch => () => {
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { login, tryLocalLogin, signup, verify, logout, clearErrorMessage, loginWithGoogle, forgotPassword },
+  {
+    login,
+    tryLocalLogin,
+    signup,
+    verify,
+    logout,
+    clearErrorMessage,
+    loginWithGoogle,
+    forgotPassword,
+    verifyForgotPassword
+  },
   { token: null, errorMessage: '', loading: false }
 );
