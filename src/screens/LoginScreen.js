@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Text, Input, Button } from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -12,7 +12,7 @@ import Spacer from '../components/Spacer';
 import { Context as AuthContext } from '../context/AuthContext';
 import ErrorModal from '../components/ErrorModal';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const { login, clearErrorMessage, state: { loading, errorMessage }, loginWithGoogle } = useContext(AuthContext);
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
@@ -97,6 +97,13 @@ const LoginScreen = () => {
             {errors.password && touched.password &&
               <Text style={styles.errorText}>{errors.password}</Text>
             }
+            <TouchableOpacity
+              style={{ width: '90%', alignItems: 'flex-end' }}
+              onPress={() => navigation.navigate('ForgotPassword')}
+              activeOpacity={0.6}
+            >
+              <Text style={{ fontWeight: 'bold', color: '#AEAEAE', fontSize: 13 }}>Forgot password?</Text>
+            </TouchableOpacity>
             <Spacer />
             <Button
               title='Enter'

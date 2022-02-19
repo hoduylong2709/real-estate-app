@@ -34,12 +34,14 @@ import AccountDetailScreen from './src/screens/AccountDetailScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import OtherProfileScreen from './src/screens/OtherProfileScreen';
 import MapListingScreen from './src/screens/MapListingScreen';
+import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
   Login: LoginScreen,
   Signup: SignupScreen,
-  Verify: VerifyScreen
+  Verify: VerifyScreen,
+  ForgotPassword: ForgotPasswordScreen
 });
 
 const homeFlow = createStackNavigator({
