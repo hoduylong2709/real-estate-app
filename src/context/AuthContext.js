@@ -8,6 +8,8 @@ const authReducer = (state, action) => {
   switch (action.type) {
     case 'auth_start':
       return { ...state, loading: true };
+    case 'auth_end':
+      return { ...state, loading: false };
     case 'login':
       return { errorMessage: '', token: action.payload, loading: false };
     case 'signup': {
@@ -106,12 +108,23 @@ const logout = dispatch => async () => {
   }
 };
 
+const forgotPassword = dispatch => async email => {
+  dispatch({ type: 'auth_start' });
+  try {
+    await realEstateApi.post('/users/forgot-password', { email });
+    dispatch({ type: 'auth_end' });
+    navigate('Verify');
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Email not yet registered in system database!' });
+  }
+};
+
 const clearErrorMessage = dispatch => () => {
   dispatch({ type: 'clear_error_message' });
 };
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { login, tryLocalLogin, signup, verify, logout, clearErrorMessage, loginWithGoogle },
+  { login, tryLocalLogin, signup, verify, logout, clearErrorMessage, loginWithGoogle, forgotPassword },
   { token: null, errorMessage: '', loading: false }
 );

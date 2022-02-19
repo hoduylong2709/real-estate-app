@@ -10,6 +10,13 @@ export const loginValidationSchema = yup.object().shape({
     .required('Password is required')
 });
 
+export const forgotPasswordSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email('Please enter valid email')
+    .required('Email address is required')
+});
+
 export const signupValidationSchema = yup.object().shape({
   firstName: yup
     .string()
