@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Input, Button } from 'react-native-elements';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { Ionicons } from '@expo/vector-icons';
 import { Formik } from 'formik';
+import { Context as AuthContext } from '../context/AuthContext';
 import * as constants from '../constants';
 import Spacer from '../components/Spacer';
 import * as validationSchema from '../validationSchema';
+import ErrorModal from '../components/ErrorModal';
 
-const ChangePasswordScreen = () => {
+const ChangePasswordScreen = ({ navigation }) => {
+  const email = navigation.getParam('email');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { state: { loading, errorMessage }, changePassword, clearErrorMessage } = useContext(AuthContext);
 
   const eyeIcon1 = <Ionicons name='eye' size={24} color={constants.MAIN_COLOR} onPress={() => setShowPassword(true)} />;
   const eyeOffIcon1 = <Ionicons name='eye-off' size={24} color={constants.MAIN_COLOR} onPress={() => setShowPassword(false)} />;
@@ -29,7 +34,7 @@ const ChangePasswordScreen = () => {
       <Formik
         validationSchema={validationSchema.changePasswordSchema}
         initialValues={{ password: '', confirmPassword: '' }}
-        onSubmit={() => console.log('aaaaa')}
+        onSubmit={values => changePassword(email, values.password)}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, isValid, touched }) => (
           <>
@@ -89,6 +94,14 @@ const ChangePasswordScreen = () => {
           </>
         )}
       </Formik>
+      <Spinner
+        visible={loading}
+      />
+      <ErrorModal
+        isError={errorMessage ? true : false}
+        hideModal={clearErrorMessage}
+        text={errorMessage}
+      />
     </View>
   );
 };

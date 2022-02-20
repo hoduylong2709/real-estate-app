@@ -3,6 +3,7 @@ import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { Text, Input, Button } from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Toast from 'react-native-simple-toast';
 import { MaterialIcons, Entypo, FontAwesome } from '@expo/vector-icons';
 import * as Google from 'expo-google-app-auth';
 import { Formik } from 'formik';
@@ -13,8 +14,13 @@ import { Context as AuthContext } from '../context/AuthContext';
 import ErrorModal from '../components/ErrorModal';
 
 const LoginScreen = ({ navigation }) => {
+  const message = navigation.getParam('message');
   const { login, clearErrorMessage, state: { loading, errorMessage }, loginWithGoogle } = useContext(AuthContext);
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
+
+  if (message) {
+    Toast.show('Change password successfully!', Toast.SHORT);
+  }
 
   const handleGoogleLogin = () => {
     setGoogleSubmitting(true);

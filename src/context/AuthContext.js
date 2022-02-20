@@ -124,9 +124,20 @@ const verifyForgotPassword = dispatch => async (email, verifyCode) => {
   try {
     await realEstateApi.post('/users/forgot-password/verify', { email, verifyCode });
     dispatch({ type: 'auth_end' });
-    navigate('ChangePassword');
+    navigate('ChangePassword', { email });
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'The verify code is incorrect!' });
+  }
+};
+
+const changePassword = dispatch => async (email, newPassword) => {
+  dispatch({ type: 'auth_start' });
+  try {
+    await realEstateApi.patch('/users/change-password', { email, newPassword });
+    dispatch({ type: 'auth_end' });
+    navigate('Login', { message: 'Change password successfully!' });
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Something went wrong. Please try again!' });
   }
 };
 
@@ -145,7 +156,8 @@ export const { Provider, Context } = createDataContext(
     clearErrorMessage,
     loginWithGoogle,
     forgotPassword,
-    verifyForgotPassword
+    verifyForgotPassword,
+    changePassword
   },
   { token: null, errorMessage: '', loading: false }
 );
