@@ -17,6 +17,18 @@ export const forgotPasswordSchema = yup.object().shape({
     .required('Email address is required')
 });
 
+export const changePasswordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Please enter a valid password')
+    .required('Password is required'),
+  confirmPassword: yup
+    .string()
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Please enter a valid password')
+    .required('Please confirm password')
+    .oneOf([yup.ref('password'), null], 'Confirm password must match with password')
+});
+
 export const signupValidationSchema = yup.object().shape({
   firstName: yup
     .string()
