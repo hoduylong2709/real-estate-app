@@ -139,9 +139,10 @@ const ProfileScreen = ({ navigation }) => {
         <Spacer />
         <TouchableOpacity
           activeOpacity={0.5}
+          onPress={() => navigation.navigate('ChangeMyPassword')}
         >
           <ProfileOption
-            optionName='Settings'
+            optionName='Change Password'
             icon={<Octicons name='gear' size={20} color='grey' />}
           />
         </TouchableOpacity>

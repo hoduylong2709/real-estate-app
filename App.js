@@ -36,6 +36,7 @@ import OtherProfileScreen from './src/screens/OtherProfileScreen';
 import MapListingScreen from './src/screens/MapListingScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
+import ChangeMyPasswordScreen from './src/screens/ChangeMyPasswordScreen';
 
 const loginFlow = createStackNavigator({
   Welcome: WelcomeScreen,
@@ -92,7 +93,8 @@ const profileFlow = createStackNavigator({
   ListingDetail: ListingDetailScreen,
   OtherProfile: OtherProfileScreen,
   Rating: RatingScreen,
-  AccountDetail: AccountDetailScreen
+  AccountDetail: AccountDetailScreen,
+  ChangeMyPassword: ChangeMyPasswordScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
@@ -110,7 +112,8 @@ profileFlow.navigationOptions = ({ navigation }) => {
     routeName === 'Camera' ||
     routeName === 'ListingDetail' ||
     routeName === 'AccountDetail' ||
-    routeName === 'OtherProfile') {
+    routeName === 'OtherProfile' ||
+    routeName === 'ChangeMyPassword') {
     tabBarVisible = false;
   }
 

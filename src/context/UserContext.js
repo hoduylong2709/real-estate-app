@@ -8,6 +8,8 @@ const userReducer = (state, action) => {
   switch (action.type) {
     case 'process_start':
       return { ...state, loading: true };
+    case 'process_end':
+      return { ...state, loading: false };
     case 'post_avatar':
       return { ...state, errorMessage: '', loading: false };
     case 'get_user':
@@ -16,6 +18,8 @@ const userReducer = (state, action) => {
       return { ...state, errorMessage: '', loading: false };
     case 'add_error':
       return { ...state, errorMessage: action.payload, loading: false };
+    case 'clear_error_message':
+      return { ...state, errorMessage: '' };
     default:
       return state;
   }
@@ -111,8 +115,32 @@ const editProfile = dispatch => async updatedObj => {
   }
 };
 
+const changeMyPassword = dispatch => async (currentPassword, newPassword) => {
+  dispatch({ type: 'process_start' });
+  try {
+    await realEstateApi.patch('/users/me/change-password', { currentPassword, newPassword });
+    dispatch({ type: 'process_end' });
+    navigate('Profile');
+  } catch (error) {
+    dispatch({ type: 'add_error', payload: 'Please check current password or your network!' });
+  }
+};
+
+const clearErrorMessage = dispatch => () => {
+  dispatch({ type: 'clear_error_message' });
+};
+
 export const { Provider, Context } = createDataContext(
   userReducer,
-  { deleteAvatar, postAvatar, getUserById, addFavoriteListing, deleteFavoriteListing, editProfile },
+  {
+    deleteAvatar,
+    postAvatar,
+    getUserById,
+    addFavoriteListing,
+    deleteFavoriteListing,
+    editProfile,
+    changeMyPassword,
+    clearErrorMessage
+  },
   { loading: false, errorMessage: '', user: null }
 );

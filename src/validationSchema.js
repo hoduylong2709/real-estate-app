@@ -29,6 +29,21 @@ export const changePasswordSchema = yup.object().shape({
     .oneOf([yup.ref('password'), null], 'Confirm password must match with password')
 });
 
+export const changeMyPasswordSchema = yup.object().shape({
+  currentPassword: yup
+    .string()
+    .required('Current password is required'),
+  newPassword: yup
+    .string()
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Please enter a valid new password')
+    .required('New password is required'),
+  confirmNewPassword: yup
+    .string()
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Please enter a valid confirm password')
+    .required('Please confirm new password')
+    .oneOf([yup.ref('newPassword'), null], 'Confirm password must match with new password')
+});
+
 export const signupValidationSchema = yup.object().shape({
   firstName: yup
     .string()
