@@ -94,7 +94,8 @@ const profileFlow = createStackNavigator({
   OtherProfile: OtherProfileScreen,
   Rating: RatingScreen,
   AccountDetail: AccountDetailScreen,
-  ChangeMyPassword: ChangeMyPasswordScreen
+  ChangeMyPassword: ChangeMyPasswordScreen,
+  Chat: ChatScreen
 }, {
   defaultNavigationOptions: {
     headerTitleAlign: 'center'
@@ -113,7 +114,8 @@ profileFlow.navigationOptions = ({ navigation }) => {
     routeName === 'ListingDetail' ||
     routeName === 'AccountDetail' ||
     routeName === 'OtherProfile' ||
-    routeName === 'ChangeMyPassword') {
+    routeName === 'ChangeMyPassword' ||
+    routeName === 'Chat') {
     tabBarVisible = false;
   }
 
