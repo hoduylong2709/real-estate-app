@@ -102,7 +102,11 @@ const MessagesScreen = ({ navigation }) => {
                       friend={item.members.find(member => member._id !== userObj._id)}
                       currentUser={userObj}
                       onlineUsers={onlineUsers}
-                      lastMessage={arrivalMessage ? { ...arrivalMessage, senderId: arrivalMessage.user._id } : item.lastMessage}
+                      lastMessage={
+                        arrivalMessage && item.members.find(member => member._id !== userObj._id)._id === arrivalMessage.user._id ?
+                          { ...arrivalMessage, senderId: arrivalMessage.user._id } :
+                          item.lastMessage
+                      }
                     />
                   </TouchableOpacity>
                 </Swipeable>

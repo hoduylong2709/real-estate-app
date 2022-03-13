@@ -111,7 +111,7 @@ const createListing = dispatch => async (
 
 const fetchListings = dispatch => async () => {
   dispatch({ type: 'start_fetching' });
-  const response = await realEstateApi.get('/listings/me');
+  const response = await realEstateApi.get('/listings/me?sortBy=createdAt:desc');
   dispatch({ type: 'fetch_listings', payload: response.data });
 };
 

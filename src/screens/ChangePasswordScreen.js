@@ -16,11 +16,11 @@ const ChangePasswordScreen = ({ navigation }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { state: { loading, errorMessage }, changePassword, clearErrorMessage } = useContext(AuthContext);
 
-  const eyeIcon1 = <Ionicons name='eye' size={24} color={constants.MAIN_COLOR} onPress={() => setShowPassword(true)} />;
-  const eyeOffIcon1 = <Ionicons name='eye-off' size={24} color={constants.MAIN_COLOR} onPress={() => setShowPassword(false)} />;
+  const eyeIcon1 = <Ionicons name='eye' size={24} color={constants.MAIN_COLOR} onPress={() => setShowPassword(false)} />;
+  const eyeOffIcon1 = <Ionicons name='eye-off' size={24} color={constants.MAIN_COLOR} onPress={() => setShowPassword(true)} />;
 
-  const eyeIcon2 = <Ionicons name='eye' size={24} color={constants.MAIN_COLOR} onPress={() => setShowConfirmPassword(true)} />;
-  const eyeOffIcon2 = <Ionicons name='eye-off' size={24} color={constants.MAIN_COLOR} onPress={() => setShowConfirmPassword(false)} />;
+  const eyeIcon2 = <Ionicons name='eye' size={24} color={constants.MAIN_COLOR} onPress={() => setShowConfirmPassword(false)} />;
+  const eyeOffIcon2 = <Ionicons name='eye-off' size={24} color={constants.MAIN_COLOR} onPress={() => setShowConfirmPassword(true)} />;
 
   return (
     <View style={styles.container}>
@@ -52,7 +52,7 @@ const ChangePasswordScreen = ({ navigation }) => {
               autoCorrect={false}
               secureTextEntry={!showPassword}
               rightIcon={
-                !showPassword ?
+                showPassword ?
                   eyeIcon1 :
                   eyeOffIcon1
               }
@@ -71,7 +71,7 @@ const ChangePasswordScreen = ({ navigation }) => {
               autoCorrect={false}
               secureTextEntry={!showConfirmPassword}
               rightIcon={
-                !showConfirmPassword ?
+                showConfirmPassword ?
                   eyeIcon2 :
                   eyeOffIcon2
               }
