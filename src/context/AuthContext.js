@@ -135,7 +135,7 @@ const changePassword = dispatch => async (email, newPassword) => {
   try {
     await realEstateApi.patch('/users/change-password', { email, newPassword });
     dispatch({ type: 'auth_end' });
-    navigate('Login', { message: 'Change password successfully!' });
+    navigate('Login');
   } catch (error) {
     dispatch({ type: 'add_error', payload: 'Something went wrong. Please try again!' });
   }
