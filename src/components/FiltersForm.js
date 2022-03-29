@@ -178,7 +178,7 @@ const FiltersForm = ({ filters, title, description, priceValue, location, catego
           filters.includes('hasRentOrBuy') &&
           <View style={{ flexDirection: 'column' }}>
             <View style={styles.filter}>
-              <Text style={styles.label}>For rent or buy</Text>
+              <Text style={styles.label}>Rent or sale</Text>
               <ModalSelector
                 data={filterData.RENT_OR_BUY_DATA}
                 selectStyle={{ padding: 3, borderWidth: 0 }}
